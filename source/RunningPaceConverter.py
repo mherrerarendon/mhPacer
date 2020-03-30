@@ -41,15 +41,15 @@ class RunningPaceConverter:
     @staticmethod
     def GetSpeedInTargetUnits(speed, targetDistanceUnit, targetTimeUnit):
         speedInTargetUnits = {
-            'distance': ConvertDistanceToDistance(speed['distance'], speed['distanceUnit'], targetDistanceUnit),
-            'distanceUnit': targetDistanceUnit,
-            'time': ConvertTimeToTime(speed['time'], speed['timeUnit'], targetTimeUnit),
-            'timeUnit': targetTimeUnit
+            DISTANCE_KEY: RunningPaceConverter.ConvertDistanceToDistance(speed[DISTANCE_KEY], speed[DISTANCE_UNIT_KEY], targetDistanceUnit),
+            DISTANCE_UNIT_KEY: targetDistanceUnit,
+            TIME_KEY: RunningPaceConverter.ConvertTimeToTime(speed[TIME_KEY], speed[TIME_UNIT_KEY], targetTimeUnit),
+            TIME_UNIT_KEY: targetTimeUnit
         }
         return speedInTargetUnits
 
     @staticmethod
     def GetEventTimeFromSpeed(speedStr, targetEvent, targetTimeUnit):
         speed = SpeedStrParser.Parse(speedStr)
-        speedInTargetUnits = GetSpeedInTargetUnits(speed, targetEvent['distanceUnit'], targetTimeUnit)
-        return targetEvent['distance'] / speedInTargetUnits['distance'] * speedInTargetUnits['time']
+        speedInTargetUnits = RunningPaceConverter.GetSpeedInTargetUnits(speed, targetEvent[DISTANCE_UNIT_KEY], targetTimeUnit)
+        return targetEvent[DISTANCE_KEY] / speedInTargetUnits[DISTANCE_KEY] * speedInTargetUnits[TIME_KEY]

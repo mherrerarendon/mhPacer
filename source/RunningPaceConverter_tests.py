@@ -25,26 +25,26 @@ class TestRunningPaceConverter(unittest.TestCase):
     @staticmethod
     def CreateSpeed(distance, distanceUnit, time, timeUnit):
         speed = {
-            'distance': 12,
-            'distanceUnit': DistanceUnits.KM,
-            'time': 1,
-            'timeUnit': TimeUnits.Hour
+            DISTANCE_KEY: 12,
+            DISTANCE_UNIT_KEY: DistanceUnits.KM,
+            TIME_KEY: 1,
+            TIME_UNIT_KEY: TimeUnits.Hour
         }
         return speed
 
     def test_GetSpeedInTargetUnits(self):
         speed = self.CreateSpeed(12, DistanceUnits.KM, 1, TimeUnits.Hour)
-        targetEvent = {'distance': 400, 'distanceUnit': DistanceUnits.Meter}
+        targetEvent = {DISTANCE_KEY: 400, DISTANCE_UNIT_KEY: DistanceUnits.Meter}
         targetTimeUnit = TimeUnits.Second
-        speedInTargetUnits = rpc.GetSpeedInTargetUnits(speed, targetEvent, targetTimeUnit)
-        self.assertEqual(speedInTargetUnits['distance'], 12)
-        self.assertEqual(speedInTargetUnits['distanceUnit'], DistanceUnits.Meter)
-        self.assertEqual(speedInTargetUnits['time'], 1)
-        self.assertEqual(speedInTargetUnits['timeUnit'], targetTimeUnit)
+        speedInTargetUnits = rpc.GetSpeedInTargetUnits(speed, targetEvent[DISTANCE_UNIT_KEY], targetTimeUnit)
+        self.assertEqual(speedInTargetUnits[DISTANCE_KEY], 12)
+        self.assertEqual(speedInTargetUnits[DISTANCE_UNIT_KEY], DistanceUnits.Meter)
+        self.assertEqual(speedInTargetUnits[TIME_KEY], 1)
+        self.assertEqual(speedInTargetUnits[TIME_UNIT_KEY], targetTimeUnit)
 
-    def test_GetTimeFromSpeed(self):
-        import pdb; pdb.set_trace()  # breakpoint 33a71a1c //
-        self.assertEqual(rpc.GetEventTimeFromSpeed('1mph', '1000m'), (16100, TimeUnits.Second))
+    def test_GetEventTimeFromSpeed(self):
+        event = {DISTANCE_KEY: 1, DISTANCE_UNIT_KEY: DistanceUnits.Mile}
+        self.assertEqual(round(rpc.GetEventTimeFromSpeed('1kph', event, TimeUnits.Hour), 2), 1.61)
 
 
 if __name__ == '__main__':

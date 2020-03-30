@@ -2,7 +2,7 @@ import unittest
 
 from ErrorCodes import RPCException, ErrorCodes
 from SpeedStrParser import SpeedStrParser
-from Types import DistanceUnits, TimeUnits
+from Types import *
 
 
 class TestStringMethods(unittest.TestCase):
@@ -35,10 +35,10 @@ class TestStringMethods(unittest.TestCase):
 
     def test_ParseSpeedString(self):
         speed = SpeedStrParser.Parse('12mph')
-        self.assertEqual(speed['distance'], 12)
-        self.assertEqual(speed['distanceUnit'], DistanceUnits.Mile)
-        self.assertEqual(speed['time'], 1)
-        self.assertEqual(speed['timeUnit'], TimeUnits.Hour)
+        self.assertEqual(speed[DISTANCE_KEY], 12)
+        self.assertEqual(speed[DISTANCE_UNIT_KEY], DistanceUnits.Mile)
+        self.assertEqual(speed[TIME_KEY], 1)
+        self.assertEqual(speed[TIME_UNIT_KEY], TimeUnits.Hour)
 
 
 if __name__ == '__main__':
