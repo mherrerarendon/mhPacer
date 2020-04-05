@@ -7,5 +7,35 @@
 {% block body %}
 <div class="content">
 	<h1>Running Pace Converter</h1>
+	<div class="row">
+	  	<div class="column"></div>
+	  	<div class="column"></div>
+	</div>
+	<table>
+		<tbody>
+			<tr>
+				<td>
+					<label for="speedInput">Enter your speed</label>
+				</td>
+				<td>
+					<label for="targetEventInput">Enter target event</label>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="text" id="speedInput">
+				</td>
+				<td>
+					<input type="text" id="targetEventInput">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<button id="btnResult">Get Result</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div id="divResult"></div>
 </div>
 {% endblock %}
