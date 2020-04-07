@@ -3,7 +3,7 @@ $( document ).ready(function() {
     $("#btnResult").on("click", function() {
         console.log("Wheeee!");
         $("<p>")
-            .text("The crocodiles have eaten this ENTIRE PAGE!")
+            .text($("#speedInput").val())
             .addClass("crocodile")
             .appendTo("#divResult");
     });

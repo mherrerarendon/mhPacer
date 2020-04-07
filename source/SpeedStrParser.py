@@ -1,6 +1,6 @@
 from ErrorCodes import RPCException, ErrorCodes
 import re
-from Types import DistanceUnits, TimeUnits
+from Types import *
 
 
 class SpeedStrParser:
@@ -10,12 +10,23 @@ class SpeedStrParser:
         if match is None:
             raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')
         speed = {
-            'distance': SpeedStrParser.ParseValue(match.group(1)),
-            'distanceUnit': SpeedStrParser.ParseDistanceUnit(match.group(2)),
-            'time': 1,  # Assume 1 hour in 12kph, for example
-            'timeUnit': SpeedStrParser.ParseTimeUnit(match.group(3))
+            DISTANCE_KEY: SpeedStrParser.ParseValue(match.group(1)),
+            DISTANCE_UNIT_KEY: SpeedStrParser.ParseDistanceUnit(match.group(2)),
+            TIME_KEY: 1,  # Assume 1 hour in 12kph, for example
+            TIME_UNIT_KEY: SpeedStrParser.ParseTimeUnit(match.group(3))
         }
         return speed
+
+    @staticmethod
+    def SerializeSpeed(speed):
+        serializeDistanceUnit = {DistanceUnits.Mile: 'mile', DistanceUnits.KM: 'kilometer'}
+        serializeTimeUnit = {TimeUnits.Hour: 'hour', TimeUnits.Second: 'second'}
+        return {
+            DISTANCE_KEY: speed[DISTANCE_KEY],
+            DISTANCE_UNIT_KEY: serializeDistanceUnit[speed[DISTANCE_UNIT_KEY]],
+            TIME_KEY: speed[TIME_KEY],
+            TIME_UNIT_KEY: serializeTimeUnit[speed[TIME_UNIT_KEY]]
+        }
 
     @staticmethod
     def ParseValue(valueStr):
