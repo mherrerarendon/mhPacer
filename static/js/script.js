@@ -18,4 +18,16 @@ $( document ).ready(function() {
 
 var isSpeedStrReadyForParsing = function(speedStr) {
     console.log("called is ready for parsing with " + speedStr);
+    parseSpeedStr(speedStr)
+        .then((data) => {
+            console.log("got this back: " + data); // JSON data parsed by `response.json()` call
+        });
 };
+
+// http://127.0.0.1:5000//api/v1.0/parseSpeedStr?speedStr=10kph
+async function parseSpeedStr(speedStr) {
+    const response = await fetch("http://127.0.0.1:5000//api/v1.0/parseSpeedStr?speedStr=" + speedStr, {
+        method: "GET"
+    });
+    return response.json();
+}
