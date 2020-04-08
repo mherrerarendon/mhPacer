@@ -20,7 +20,6 @@ def index():
 # http://127.0.0.1:5000//api/v1.0/parseSpeedStr?speedStr=10kph
 @app.route('/api/v1.0/parseSpeedStr', methods=['GET'])
 def parseSpeedStr():
-    import pdb; pdb.set_trace()  # breakpoint 69090786 //
     response = {}
     try:
         speedStr = request.args.get('speedStr')
