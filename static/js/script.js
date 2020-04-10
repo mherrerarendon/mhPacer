@@ -33,7 +33,7 @@ function startTargetEventInputKeyDownTimer() {
     clearTimeout(targetEventInputTimer)
     targetEventInputTimer = setTimeout(function() {
         var fullStr = $("#targetEventInput").val();
-        doAttemptParseSpeedStr(fullStr);
+        doAttemptParseTargetEventStr(fullStr);
     }, timerWaitTime);
 }
 
@@ -51,7 +51,6 @@ function doAttemptParseSpeedStr(speedStr) {
             if (data.exitcode === 0) {
                 $("#divParsedSpeed").text(getStrFromSpeedObj(data.data));
             } else {
-                console.log("got this back: " + getStrFromSpeedObj(data.data));
                 $("#divParsedSpeed").text("");
             }
         });
@@ -60,6 +59,23 @@ function doAttemptParseSpeedStr(speedStr) {
 async function parseSpeedStr(iSpeedStr) {
     const queryData = {speedStr: iSpeedStr};
     return await queryAPINameWithData("parseSpeedStr", queryData);
+}
+
+function doAttemptParseTargetEventStr(targetEventStr) {
+    parseTargetEventStr(targetEventStr)
+        .then((data) => {
+            if (data.exitcode === 0) {
+                $("#divParsedTargetEvent").text(getStrFromSpeedObj(data.data));
+            } else {
+                console.log("got this back: " + data.data);
+                $("#divParsedTargetEvent").text("");
+            }
+        });
+}
+
+async function parseTargetEventStr(iTargetEventStr) {
+    const queryData = {targetEventStr: iTargetEventStr};
+    return await queryAPINameWithData("parseTargetEventStr", queryData);
 }
 
 function toQueryStr(object) {

@@ -31,5 +31,19 @@ def parseSpeedStr():
     return jsonify(response)
 
 
+# TODO
+@app.route('/api/v1.0/parseTargetEventStr', methods=['GET'])
+def parseTargetEventStr():
+    response = {}
+    try:
+        targetEventStr = request.args.get('targetEventStr')
+        response['data'] = SpeedStrParser.SerializeSpeed(SpeedStrParser.Parse(targetEventStr))
+        response['exitcode'] = 0
+    except RPCException as e:
+        response['exitcode'] = e.error_code.value
+        response['data'] = repr(e)
+    return jsonify(response)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
