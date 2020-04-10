@@ -9,21 +9,21 @@ $( document ).ready(function() {
     });
 
     $("#speedInput").on("keydown", function(event) {
-        // At the time of the event, the input does not have the
-        // key that was just pressed, which is why we append it here
-        var fullStr = $("#speedInput").val();
-        if (isValidKeyCode(event.keyCode)) {
-            fullStr += event.key;
-        }
-        isSpeedStrReadyForParsing(fullStr);
+        startSpeedInputKeyDownTimer();
     });
 });
 
-function isValidKeyCode(keyCode) {
-    return keyCode > 32 && keyCode < 127;
+var speedInputTimer;
+
+function startSpeedInputKeyDownTimer() {
+    clearTimeout(speedInputTimer)
+    speedInputTimer = setTimeout(function() {
+        var fullStr = $("#speedInput").val();
+        doAttemptParseSpeedStr(fullStr);
+    }, 250);
 }
 
-var getStrFromSpeedObj = function(speedObj) {
+function getStrFromSpeedObj(speedObj) {
     const distance = speedObj.distance;
     const distanceUnit = speedObj.distanceUnit;
     const time = speedObj.time;
@@ -31,7 +31,7 @@ var getStrFromSpeedObj = function(speedObj) {
     return distance + " " + distanceUnit + " per " + timeUnit;
 }
 
-var isSpeedStrReadyForParsing = function(speedStr) {
+function doAttemptParseSpeedStr(speedStr) {
     console.log("called is ready for parsing with " + speedStr);
     parseSpeedStr(speedStr)
         .then((data) => {
@@ -44,9 +44,20 @@ var isSpeedStrReadyForParsing = function(speedStr) {
         });
 };
 
+function toQueryStr(object) {
+    var esc = encodeURIComponent;
+    var query = Object.keys(object)
+        .map(k => esc(k) + '=' + esc(object[k]))
+        .join('&');
+    return query;
+}
+
 // http://127.0.0.1:5000//api/v1.0/parseSpeedStr?speedStr=10kph
-async function parseSpeedStr(speedStr) {
-    const response = await fetch("http://127.0.0.1:5000//api/v1.0/parseSpeedStr?speedStr=" + speedStr, {
+async function parseSpeedStr(iSpeedStr) {
+    const queryData = {speedStr: iSpeedStr};
+    const url = "http://127.0.0.1:5000//api/v1.0/parseSpeedStr?" + toQueryStr(queryData);
+    console.log(url);
+    const response = await fetch(url, {
         method: "GET"
     });
     return response.json();
