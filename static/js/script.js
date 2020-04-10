@@ -11,16 +11,30 @@ $( document ).ready(function() {
     $("#speedInput").on("keydown", function(event) {
         startSpeedInputKeyDownTimer();
     });
+
+    $("#targetEventInput").on("keydown", function(event) {
+        startTargetEventInputKeyDownTimer();
+    });
 });
 
 var speedInputTimer;
+var targetEventInputTimer;
+const timerWaitTime = 250;
 
 function startSpeedInputKeyDownTimer() {
     clearTimeout(speedInputTimer)
     speedInputTimer = setTimeout(function() {
         var fullStr = $("#speedInput").val();
         doAttemptParseSpeedStr(fullStr);
-    }, 250);
+    }, timerWaitTime);
+}
+
+function startTargetEventInputKeyDownTimer() {
+    clearTimeout(targetEventInputTimer)
+    targetEventInputTimer = setTimeout(function() {
+        var fullStr = $("#targetEventInput").val();
+        doAttemptParseSpeedStr(fullStr);
+    }, timerWaitTime);
 }
 
 function getStrFromSpeedObj(speedObj) {
@@ -32,17 +46,21 @@ function getStrFromSpeedObj(speedObj) {
 }
 
 function doAttemptParseSpeedStr(speedStr) {
-    console.log("called is ready for parsing with " + speedStr);
     parseSpeedStr(speedStr)
         .then((data) => {
             if (data.exitcode === 0) {
                 $("#divParsedSpeed").text(getStrFromSpeedObj(data.data));
             } else {
-                console.log("got this back: " + getStrFromSpeedObj(data.data)); // JSON data parsed by `response.json()` call
+                console.log("got this back: " + getStrFromSpeedObj(data.data));
                 $("#divParsedSpeed").text("");
             }
         });
 };
+
+async function parseSpeedStr(iSpeedStr) {
+    const queryData = {speedStr: iSpeedStr};
+    return await queryAPINameWithData("parseSpeedStr", queryData);
+}
 
 function toQueryStr(object) {
     var esc = encodeURIComponent;
@@ -52,10 +70,10 @@ function toQueryStr(object) {
     return query;
 }
 
-// http://127.0.0.1:5000//api/v1.0/parseSpeedStr?speedStr=10kph
-async function parseSpeedStr(iSpeedStr) {
-    const queryData = {speedStr: iSpeedStr};
-    const url = "http://127.0.0.1:5000//api/v1.0/parseSpeedStr?" + toQueryStr(queryData);
+async function queryAPINameWithData(apiName, data) {
+    hostName = "http://127.0.0.1:5000//api/";
+    apiVersion = "v1.0/";
+    const url = hostName + apiVersion + apiName + "?" + toQueryStr(data);
     console.log(url);
     const response = await fetch(url, {
         method: "GET"
