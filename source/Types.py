@@ -20,7 +20,7 @@ MILE_PER_KM = 1 / KM_PER_MILE
 SECONDS_PER_HOUR = 3600
 HOURS_PER_SECOND = 1 / SECONDS_PER_HOUR
 
-DISTANCE_KEY = 'distance'
-DISTANCE_UNIT_KEY = 'distanceUnit'
 TIME_KEY = 'time'
-TIME_UNIT_KEY = 'timeUnit'
+EVENT_KEY = 'event'
+DISTANCE_KEY = 'distance'
+UNIT_KEY = 'unit'

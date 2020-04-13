@@ -7,7 +7,7 @@ sourceDir = os.path.abspath(os.path.join(scriptDir, 'source'))
 sys.path.append(sourceDir)
 
 from ErrorCodes import RPCException
-from SpeedStrParser import SpeedStrParser
+from SpeedStrParser import *
 
 app = Flask(__name__)
 
@@ -23,7 +23,7 @@ def parseSpeedStr():
     response = {}
     try:
         speedStr = request.args.get('speedStr')
-        response['data'] = SpeedStrParser.SerializeSpeed(SpeedStrParser.Parse(speedStr))
+        response['data'] = Speed.ParseSpeedStr(speedStr).Serialize()
         response['exitcode'] = 0
     except RPCException as e:
         response['exitcode'] = e.error_code.value
@@ -31,13 +31,12 @@ def parseSpeedStr():
     return jsonify(response)
 
 
-# TODO
-@app.route('/api/v1.0/parseTargetEventStr', methods=['GET'])
+@app.route('/api/v1.0/parseEventStr', methods=['GET'])
 def parseTargetEventStr():
     response = {}
     try:
-        targetEventStr = request.args.get('targetEventStr')
-        response['data'] = SpeedStrParser.SerializeSpeed(SpeedStrParser.Parse(targetEventStr))
+        targetEventStr = request.args.get('eventStr')
+        response['data'] = Event.ParseEventStr(targetEventStr).Serialize()
         response['exitcode'] = 0
     except RPCException as e:
         response['exitcode'] = e.error_code.value

@@ -38,10 +38,10 @@ function startTargetEventInputKeyDownTimer() {
 }
 
 function getStrFromSpeedObj(speedObj) {
-    const distance = speedObj.distance;
-    const distanceUnit = speedObj.distanceUnit;
-    const time = speedObj.time;
-    const timeUnit = speedObj.timeUnit;
+    const distance = speedObj.event.distance;
+    const distanceUnit = speedObj.event.unit;
+    const time = speedObj.time.time;
+    const timeUnit = speedObj.time.unit;
     return distance + " " + distanceUnit + " per " + timeUnit;
 }
 
@@ -61,11 +61,17 @@ async function parseSpeedStr(iSpeedStr) {
     return await queryAPINameWithData("parseSpeedStr", queryData);
 }
 
+function getStrFromEventObj(eventObj) {
+    const distance = eventObj.event.distance;
+    const distanceUnit = eventObj.event.unit;
+    return distance + " " + distanceUnit;
+}
+
 function doAttemptParseTargetEventStr(targetEventStr) {
     parseTargetEventStr(targetEventStr)
         .then((data) => {
             if (data.exitcode === 0) {
-                $("#divParsedTargetEvent").text(getStrFromSpeedObj(data.data));
+                $("#divParsedTargetEvent").text(getStrFromEventObj(data.data));
             } else {
                 console.log("got this back: " + data.data);
                 $("#divParsedTargetEvent").text("");
@@ -73,9 +79,9 @@ function doAttemptParseTargetEventStr(targetEventStr) {
         });
 }
 
-async function parseTargetEventStr(iTargetEventStr) {
-    const queryData = {targetEventStr: iTargetEventStr};
-    return await queryAPINameWithData("parseTargetEventStr", queryData);
+async function parseTargetEventStr(targetEventStr) {
+    const queryData = {eventStr: targetEventStr};
+    return await queryAPINameWithData("parseEventStr", queryData);
 }
 
 function toQueryStr(object) {

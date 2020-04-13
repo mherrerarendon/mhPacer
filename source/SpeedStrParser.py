@@ -3,38 +3,28 @@ import re
 from Types import *
 
 
-class SpeedStrParser:
+class Event:
+    def __init__(self):
+        self.distance = 0
+        self.unit = None
+
     @staticmethod
-    def Parse(speedStr):
-        match = re.search(r'(\d+)(\S)p(\S)', speedStr)
+    def ParseEventStr(eventStr):
+        match = re.search(r'(\d+)(\S)', eventStr)
         if match is None:
-            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')
-        speed = {
-            DISTANCE_KEY: SpeedStrParser.ParseValue(match.group(1)),
-            DISTANCE_UNIT_KEY: SpeedStrParser.ParseDistanceUnit(match.group(2)),
-            TIME_KEY: 1,  # Assume 1 hour in 12kph, for example
-            TIME_UNIT_KEY: SpeedStrParser.ParseTimeUnit(match.group(3))
-        }
-        return speed
+            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse event string')
+        event = Event()
+        event.distance = Event.ParseDistanceStr(match.group(1))
+        event.unit = Event.ParseDistanceUnit(match.group(2))
+        return event
 
     @staticmethod
-    def SerializeSpeed(speed):
-        serializeDistanceUnit = {DistanceUnits.Mile: 'mile', DistanceUnits.KM: 'kilometer'}
-        serializeTimeUnit = {TimeUnits.Hour: 'hour', TimeUnits.Second: 'second'}
-        return {
-            DISTANCE_KEY: speed[DISTANCE_KEY],
-            DISTANCE_UNIT_KEY: serializeDistanceUnit[speed[DISTANCE_UNIT_KEY]],
-            TIME_KEY: speed[TIME_KEY],
-            TIME_UNIT_KEY: serializeTimeUnit[speed[TIME_UNIT_KEY]]
-        }
-
-    @staticmethod
-    def ParseValue(valueStr):
+    def ParseDistanceStr(distanceStr):
         value = None
-        if valueStr is None:
+        if distanceStr is None:
             raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse value')
         try:
-            value = int(valueStr)
+            value = int(distanceStr)
         except Exception:
             raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse value')
         return value
@@ -48,6 +38,25 @@ class SpeedStrParser:
             raise RPCException(ErrorCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
         return distanceStrToEnum[distanceUnitStr.lower()]
 
+    def Serialize(self):
+        serializeDistanceUnit = {DistanceUnits.Mile: 'mile', DistanceUnits.KM: 'kilometer'}
+        return {
+            DISTANCE_KEY: self.distance,
+            UNIT_KEY: serializeDistanceUnit[self.unit],
+        }
+
+
+class Time:
+    def __init__(self):
+        self.time = 0
+        self.unit = None
+
+    def ParseTimeStr(timeStr):
+        time = Time()
+        time.time = 1  # Assume 1 for time value for now
+        time.unit = Time.ParseTimeUnit(timeStr)
+        return time
+
     @staticmethod
     def ParseTimeUnit(timeUnitStr):
         if timeUnitStr is None:
@@ -56,3 +65,37 @@ class SpeedStrParser:
         if timeUnitStr.lower() not in timeStrToEnum:
             raise RPCException(ErrorCodes.TIME_UNIT_PARSE_ERR, 'Could not parse time unit')
         return timeStrToEnum[timeUnitStr.lower()]
+
+    def Serialize(self):
+        serializeTimeUnit = {TimeUnits.Hour: 'hour', TimeUnits.Second: 'second'}
+        return {
+            TIME_KEY: self.time,
+            UNIT_KEY: serializeTimeUnit[self.unit]
+        }
+
+
+class Speed:
+    def __init__(self):
+        self.event = Event()
+        self.time = Time()
+
+    @staticmethod
+    def ParseSpeedStr(speedStr):
+        eventStr, timeStr = Speed.GetEventAndTimeStr(speedStr)
+        speed = Speed()
+        speed.event = Event.ParseEventStr(eventStr)
+        speed.time = Time.ParseTimeStr(timeStr)
+        return speed
+
+    @staticmethod
+    def GetEventAndTimeStr(speedStr):
+        match = re.search(r'(\d+\S)p(\S)', speedStr)
+        if match is None:
+            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')
+        return match.group(1), match.group(2)
+
+    def Serialize(self):
+        return {
+            EVENT_KEY: self.event.Serialize(),
+            TIME_KEY: self.time.Serialize()
+        }
