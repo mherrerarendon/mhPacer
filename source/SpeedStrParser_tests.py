@@ -41,6 +41,9 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(speed.time.unit, TimeUnits.Hour)
 
     def test_ParseEventString(self):
+        event = Event.ParseEventStr('12m')
+        self.assertEqual(event.distance, 12)
+        self.assertEqual(event.unit, DistanceUnits.Mile)
 
 
 if __name__ == '__main__':

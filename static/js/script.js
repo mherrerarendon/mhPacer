@@ -62,8 +62,8 @@ async function parseSpeedStr(iSpeedStr) {
 }
 
 function getStrFromEventObj(eventObj) {
-    const distance = eventObj.event.distance;
-    const distanceUnit = eventObj.event.unit;
+    const distance = eventObj.distance;
+    const distanceUnit = eventObj.unit;
     return distance + " " + distanceUnit;
 }
 

@@ -44,5 +44,8 @@ def parseTargetEventStr():
     return jsonify(response)
 
 
+@app.route('/api/v1.0/getEventTimeWithSpeed', methods=['GET'])
+
+
 if __name__ == '__main__':
     app.run(debug=True)

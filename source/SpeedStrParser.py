@@ -4,9 +4,9 @@ from Types import *
 
 
 class Event:
-    def __init__(self):
-        self.distance = 0
-        self.unit = None
+    def __init__(self, distance=0, unit=None):
+        self.distance = distance
+        self.unit = unit
 
     @staticmethod
     def ParseEventStr(eventStr):
@@ -42,14 +42,14 @@ class Event:
         serializeDistanceUnit = {DistanceUnits.Mile: 'mile', DistanceUnits.KM: 'kilometer'}
         return {
             DISTANCE_KEY: self.distance,
-            UNIT_KEY: serializeDistanceUnit[self.unit],
+            UNIT_KEY: serializeDistanceUnit[self.unit]
         }
 
 
 class Time:
-    def __init__(self):
-        self.time = 0
-        self.unit = None
+    def __init__(self, time=0, unit=None):
+        self.time = time
+        self.unit = unit
 
     def ParseTimeStr(timeStr):
         time = Time()
@@ -75,9 +75,9 @@ class Time:
 
 
 class Speed:
-    def __init__(self):
-        self.event = Event()
-        self.time = Time()
+    def __init__(self, event=Event(), time=Time()):
+        self.event = event
+        self.time = time
 
     @staticmethod
     def ParseSpeedStr(speedStr):
@@ -99,3 +99,8 @@ class Speed:
             EVENT_KEY: self.event.Serialize(),
             TIME_KEY: self.time.Serialize()
         }
+
+    def Normalize(self):
+        timeValue = speed.time.time
+        self.speed.event.distance /= timeValue
+        self.speed.time.time /= timeValue
