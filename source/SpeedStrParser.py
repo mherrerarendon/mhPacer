@@ -1,4 +1,5 @@
 from ErrorCodes import RPCException, ErrorCodes
+import json
 import re
 from Types import *
 
@@ -7,6 +8,9 @@ class Event:
     def __init__(self, distance=0, unit=None):
         self.distance = distance
         self.unit = unit
+
+    def __repr__(self):
+        return json.dumps(self.Serialize())
 
     @staticmethod
     def ParseEventStr(eventStr):
@@ -39,7 +43,9 @@ class Event:
         return distanceStrToEnum[distanceUnitStr.lower()]
 
     def Serialize(self):
-        serializeDistanceUnit = {DistanceUnits.Mile: 'mile', DistanceUnits.KM: 'kilometer'}
+        serializeDistanceUnit = {DistanceUnits.Mile: 'mile',
+                                 DistanceUnits.KM: 'kilometer',
+                                 DistanceUnits.Meter: 'meter'}
         return {
             DISTANCE_KEY: self.distance,
             UNIT_KEY: serializeDistanceUnit[self.unit]
@@ -50,6 +56,9 @@ class Time:
     def __init__(self, time=0, unit=None):
         self.time = time
         self.unit = unit
+
+    def __repr__(self):
+        return json.dumps(self.Serialize())
 
     def ParseTimeStr(timeStr):
         time = Time()
@@ -67,7 +76,8 @@ class Time:
         return timeStrToEnum[timeUnitStr.lower()]
 
     def Serialize(self):
-        serializeTimeUnit = {TimeUnits.Hour: 'hour', TimeUnits.Second: 'second'}
+        serializeTimeUnit = {TimeUnits.Hour: 'hour',
+                             TimeUnits.Second: 'second'}
         return {
             TIME_KEY: self.time,
             UNIT_KEY: serializeTimeUnit[self.unit]
@@ -75,9 +85,12 @@ class Time:
 
 
 class Speed:
-    def __init__(self, event=Event(), time=Time()):
-        self.event = event
-        self.time = time
+    def __init__(self, event=None, time=None):
+        self.event = Event() if event is None else event
+        self.time = Time() if time is None else time
+
+    def __repr__(self):
+        return json.dumps(self.Serialize())
 
     @staticmethod
     def ParseSpeedStr(speedStr):
@@ -101,6 +114,7 @@ class Speed:
         }
 
     def Normalize(self):
-        timeValue = speed.time.time
-        self.speed.event.distance /= timeValue
-        self.speed.time.time /= timeValue
+        timeValue = self.time.time
+        self.event.distance /= timeValue
+        self.time.time /= timeValue
+        return self

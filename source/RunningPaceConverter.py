@@ -3,13 +3,15 @@ from Types import *
 
 
 class RunningPaceConverter:
-    def __init__(self, speed=Speed()):
-        self.speed = speed if speed == Speed() else self.ToBaseSpeed(speed)
+    def __init__(self, speed=None):
+        self.speed = Speed() if speed is None else self.ToBaseSpeed(speed)
 
-    def ToBaseSpeed(self, speed):
-        self.speed.event = self.ToBaseEvent(speed.event)
-        self.speed.time = self.ToBaseTime(speed.time)
-        self.speed.Normalize()
+    @staticmethod
+    def ToBaseSpeed(speed):
+        speed.event = RunningPaceConverter.ToBaseEvent(speed.event)
+        speed.time = RunningPaceConverter.ToBaseTime(speed.time)
+        speed.Normalize()
+        return speed
 
     @staticmethod
     def ToBaseEvent(event):
@@ -17,7 +19,8 @@ class RunningPaceConverter:
         # Only convert to kilometer
         distanceTable = {
             DistanceUnits.KM: lambda kms: kms,
-            DistanceUnits.Mile: lambda miles: miles * KM_PER_MILE
+            DistanceUnits.Mile: lambda miles: miles * KM_PER_MILE,
+            DistanceUnits.Meter: lambda meters: meters / 1000
         }
         return Event(distanceTable[event.unit](event.distance), DistanceUnits.KM)
 
@@ -25,9 +28,10 @@ class RunningPaceConverter:
         # Only convert from kilometer
         distanceTable = {
             DistanceUnits.KM: lambda kms: kms,
-            DistanceUnits.Mile: lambda kms: kms * MILE_PER_KM
+            DistanceUnits.Mile: lambda kms: kms * MILE_PER_KM,
+            DistanceUnits.Meter: lambda kms: kms * 1000
         }
-        return Event(distanceTable[distanceUnit](self.event.distance), distanceUnit)
+        return Event(distanceTable[distanceUnit](self.speed.event.distance), distanceUnit)
 
     @staticmethod
     def ToBaseTime(time):
@@ -37,7 +41,7 @@ class RunningPaceConverter:
             TimeUnits.Second: lambda seconds: seconds * HOURS_PER_SECOND,
             TimeUnits.Hour: lambda hours: hours
         }
-        return Time(timeTable[time.unit](time.time), Time.Hour)
+        return Time(timeTable[time.unit](time.time), TimeUnits.Hour)
 
     def GetTimeWithUnit(self, timeUnit):
         # Only convert from hour
@@ -45,7 +49,7 @@ class RunningPaceConverter:
             TimeUnits.Hour: lambda hours: hours,
             TimeUnits.Second: lambda hours: hours * SECONDS_PER_HOUR
         }
-        return Time(timeTable[timeUnit](self.time.time), timeUnit)
+        return Time(timeTable[timeUnit](self.speed.time.time), timeUnit)
 
     def GetSpeedInTargetUnits(self, targetDistanceUnit, targetTimeUnit):
         eventInTargetUnits = self.GetEventWithUnit(targetDistanceUnit)
@@ -56,4 +60,4 @@ class RunningPaceConverter:
     def GetEventTimeWithSpeed(speed, event, targetTimeUnit):
         rpc = RunningPaceConverter(speed)
         speedInTargetUnits = rpc.GetSpeedInTargetUnits(event.unit, targetTimeUnit)
-        return event.distance / speedInTargetUnits.event.distance
+        return Time(event.distance / speedInTargetUnits.event.distance, targetTimeUnit)

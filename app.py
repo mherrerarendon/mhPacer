@@ -7,7 +7,9 @@ sourceDir = os.path.abspath(os.path.join(scriptDir, 'source'))
 sys.path.append(sourceDir)
 
 from ErrorCodes import RPCException
+from RunningPaceConverter import RunningPaceConverter
 from SpeedStrParser import *
+from Types import *
 
 app = Flask(__name__)
 
@@ -45,6 +47,20 @@ def parseTargetEventStr():
 
 
 @app.route('/api/v1.0/getEventTimeWithSpeed', methods=['GET'])
+def getEventTimeWithSpeed():
+    response = {}
+    try:
+        speed = Speed.ParseSpeedStr(request.args.get('speedStr'))
+        targetEvent = Event.ParseEventStr(request.args.get('eventStr'))
+
+        # Assume client wants response in seconds
+        time = RunningPaceConverter.GetEventTimeWithSpeed(speed, targetEvent, TimeUnits.Second)
+        response['data'] = time.Serialize()
+        response['exitcode'] = 0
+    except RPCException as e:
+        response['exitcode'] = e.error_code.value
+        response['data'] = repr(e)
+    return jsonify(response)
 
 
 if __name__ == '__main__':

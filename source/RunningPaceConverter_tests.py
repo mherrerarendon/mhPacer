@@ -7,22 +7,21 @@ from Types import *
 
 class TestRunningPaceConverter(unittest.TestCase):
     def AssertEventConversion(self, event, distanceTargetUnit, expected):
-        dummyTime = Time(1, Time.Hour)
+        dummyTime = Time(1, TimeUnits.Hour)
         dummySpeed = Speed(event, dummyTime)
         rpc = RunningPaceConverter(dummySpeed)
-        actual = rpc.GetEventWithUnit(distanceTargetUnit)
-        self.assertEqual(round(actual, 2), round(expected, 2))
+        actualEvent = rpc.GetEventWithUnit(distanceTargetUnit)
+        self.assertEqual(round(actualEvent.distance, 2), round(expected, 2))
 
     def test_GetEventWithUnit(self):
         self.AssertEventConversion(Event(2, DistanceUnits.Mile), DistanceUnits.KM, 3.22)
         self.AssertEventConversion(Event(2, DistanceUnits.KM), DistanceUnits.Mile, 1.24)
 
     def AssertTimeConversion(self, time, targetUnit, expected):
-        dummyEvent = Event(1, DistanceUnits.KM)
-        dummySpeed = Speed(dummyEvent, time)
-        rpc = RunningPaceConverter(dummySpeed)
-        actual = rpc.GetTimeWithUnit(targetUnit)
-        self.assertEqual(round(actual, 2), round(expected, 2))
+        rpc = RunningPaceConverter()
+        rpc.speed.time = RunningPaceConverter.ToBaseTime(time)
+        actualTime = rpc.GetTimeWithUnit(targetUnit)
+        self.assertEqual(round(actualTime.time, 2), round(expected, 2))
 
     def test_GetTimeWithUnit(self):
         self.AssertTimeConversion(Time(2, TimeUnits.Hour), TimeUnits.Second, 7200)
@@ -31,10 +30,11 @@ class TestRunningPaceConverter(unittest.TestCase):
 
     def test_GetSpeedInTargetUnits(self):
         speed = Speed(Event(12, DistanceUnits.KM), Time(1, TimeUnits.Hour))
+        rpc = RunningPaceConverter(speed)
         targetEventUnit = DistanceUnits.Meter
         targetTimeUnit = TimeUnits.Second
-        speedInTargetUnits = rpc.GetSpeedInTargetUnits(speed, targetEventUnit, targetTimeUnit)
-        self.assertEqual(speedInTargetUnits.event.distance, 12)
+        speedInTargetUnits = rpc.GetSpeedInTargetUnits(targetEventUnit, targetTimeUnit)
+        self.assertEqual(round(speedInTargetUnits.event.distance, 2), 3.33)
         self.assertEqual(speedInTargetUnits.event.unit, DistanceUnits.Meter)
         self.assertEqual(speedInTargetUnits.time.time, 1)
         self.assertEqual(speedInTargetUnits.time.unit, targetTimeUnit)
@@ -42,7 +42,8 @@ class TestRunningPaceConverter(unittest.TestCase):
     def test_GetEventTimeWithSpeed(self):
         speed = Speed(Event(1, DistanceUnits.KM), Time(1, TimeUnits.Hour))
         event = Event(1, DistanceUnits.Mile)
-        self.assertEqual(round(rpc.GetEventTimeWithSpeed(speed, event, TimeUnits.Hour), 2), 1.61)
+        actualTime = RunningPaceConverter.GetEventTimeWithSpeed(speed, event, TimeUnits.Hour)
+        self.assertEqual(round(actualTime.time, 2), 1.61)
 
 
 if __name__ == '__main__':

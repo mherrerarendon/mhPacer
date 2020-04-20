@@ -1,11 +1,10 @@
 $( document ).ready(function() {
-
     $("#btnResult").on("click", function() {
-        console.log("Wheeee!");
-        $("<p>")
-            .text($("#speedInput").val())
-            .addClass("crocodile")
-            .appendTo("#divResult");
+        getEventTimeWithSpeed($("#speedInput").val(), $("#targetEventInput").val());
+        // $("<p>")
+        //     .text($("#speedInput").val())
+        //     .addClass("crocodile")
+        //     .appendTo("#divResult");
     });
 
     $("#speedInput").on("keydown", function(event) {
@@ -15,7 +14,33 @@ $( document ).ready(function() {
     $("#targetEventInput").on("keydown", function(event) {
         startTargetEventInputKeyDownTimer();
     });
+
+    enableResultBtnIfNeeded();
 });
+
+function enableResultBtnIfNeeded() {
+    const enable = ($("#divParsedSpeed").text() !== "" && $("#divParsedTargetEvent").text() !== "");
+    $("#btnResult").prop('disabled', !enable); 
+}
+
+function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
+    const queryData = {speedStr: iSpeedStr, eventStr: iEventStr};
+    queryAPINameWithData("getEventTimeWithSpeed", queryData)
+        .then((data) => {
+            if (data.exitcode === 0) {
+                $("#divResult").text(getStrFromTimeObj(data.data));
+            } else {
+                console.log("got this back: " + data.data);
+                $("#divParsedTargetEvent").text("");
+            }
+        });
+}
+
+function getStrFromTimeObj(timeObj) {
+    const time = timeObj.time;
+    const timeUnit = timeObj.unit;
+    return time + " " + timeUnit;
+}
 
 var speedInputTimer;
 var targetEventInputTimer;
@@ -53,6 +78,8 @@ function doAttemptParseSpeedStr(speedStr) {
             } else {
                 $("#divParsedSpeed").text("");
             }
+
+            enableResultBtnIfNeeded();
         });
 };
 
@@ -73,9 +100,10 @@ function doAttemptParseTargetEventStr(targetEventStr) {
             if (data.exitcode === 0) {
                 $("#divParsedTargetEvent").text(getStrFromEventObj(data.data));
             } else {
-                console.log("got this back: " + data.data);
                 $("#divParsedTargetEvent").text("");
             }
+
+            enableResultBtnIfNeeded();
         });
 }
 
@@ -96,7 +124,6 @@ async function queryAPINameWithData(apiName, data) {
     hostName = "http://127.0.0.1:5000//api/";
     apiVersion = "v1.0/";
     const url = hostName + apiVersion + apiName + "?" + toQueryStr(data);
-    console.log(url);
     const response = await fetch(url, {
         method: "GET"
     });
