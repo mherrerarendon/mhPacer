@@ -39,6 +39,7 @@ class RunningPaceConverter:
         # Only convert to hour
         timeTable = {
             TimeUnits.Second: lambda seconds: seconds * HOURS_PER_SECOND,
+            TimeUnits.Minute: lambda minutes: minutes / 60,
             TimeUnits.Hour: lambda hours: hours
         }
         return Time(timeTable[time.unit](time.time), TimeUnits.Hour)
@@ -47,6 +48,7 @@ class RunningPaceConverter:
         # Only convert from hour
         timeTable = {
             TimeUnits.Hour: lambda hours: hours,
+            TimeUnits.Minute: lambda hours: hours * 60,
             TimeUnits.Second: lambda hours: hours * SECONDS_PER_HOUR
         }
         return Time(timeTable[timeUnit](self.speed.time.time), timeUnit)

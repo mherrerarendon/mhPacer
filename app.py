@@ -53,8 +53,8 @@ def getEventTimeWithSpeed():
         speed = Speed.ParseSpeedStr(request.args.get('speedStr'))
         targetEvent = Event.ParseEventStr(request.args.get('eventStr'))
 
-        # Assume client wants response in seconds
-        time = RunningPaceConverter.GetEventTimeWithSpeed(speed, targetEvent, TimeUnits.Second)
+        # Assume client wants response in minutes
+        time = RunningPaceConverter.GetEventTimeWithSpeed(speed, targetEvent, TimeUnits.Minute)
         response['data'] = time.Serialize()
         response['exitcode'] = 0
     except RPCException as e:

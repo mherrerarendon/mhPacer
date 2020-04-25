@@ -11,6 +11,7 @@ class DistanceUnits(Enum):
 @unique
 class TimeUnits(Enum):
     Second = auto()
+    Minute = auto()
     Hour = auto()
 
 

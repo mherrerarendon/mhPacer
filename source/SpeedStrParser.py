@@ -12,6 +12,14 @@ class Event:
     def __repr__(self):
         return json.dumps(self.Serialize())
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return (
+                self.distance == other.distance and
+                self.unit == other.unit)
+        else:
+            return False
+
     @staticmethod
     def ParseEventStr(eventStr):
         match = re.search(r'(\d+)(\S)', eventStr)
@@ -60,6 +68,14 @@ class Time:
     def __repr__(self):
         return json.dumps(self.Serialize())
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return (
+                self.time == other.time and
+                self.unit == other.unit)
+        else:
+            return False
+
     def ParseTimeStr(timeStr):
         time = Time()
         time.time = 1  # Assume 1 for time value for now
@@ -77,6 +93,7 @@ class Time:
 
     def Serialize(self):
         serializeTimeUnit = {TimeUnits.Hour: 'hour',
+                             TimeUnits.Minute: 'minute',
                              TimeUnits.Second: 'second'}
         return {
             TIME_KEY: self.time,
@@ -91,6 +108,14 @@ class Speed:
 
     def __repr__(self):
         return json.dumps(self.Serialize())
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return (
+                self.event == other.event and
+                self.time == other.time)
+        else:
+            return False
 
     @staticmethod
     def ParseSpeedStr(speedStr):

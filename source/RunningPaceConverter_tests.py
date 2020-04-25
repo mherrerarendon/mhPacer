@@ -6,38 +6,56 @@ from Types import *
 
 
 class TestRunningPaceConverter(unittest.TestCase):
-    def AssertEventConversion(self, event, distanceTargetUnit, expected):
-        dummyTime = Time(1, TimeUnits.Hour)
-        dummySpeed = Speed(event, dummyTime)
-        rpc = RunningPaceConverter(dummySpeed)
-        actualEvent = rpc.GetEventWithUnit(distanceTargetUnit)
-        self.assertEqual(round(actualEvent.distance, 2), round(expected, 2))
+    # Legacy
+    def AssertEventConversion(self, event, expectedEvent):
+        rpc = RunningPaceConverter()
+        rpc.speed.event = RunningPaceConverter.ToBaseEvent(event)
+        actualEvent = rpc.GetEventWithUnit(expectedEvent.unit)
+        actualEvent.distance = round(actualEvent.distance, 2)
+        self.assertEqual(actualEvent, expectedEvent)
 
-    def test_GetEventWithUnit(self):
-        self.AssertEventConversion(Event(2, DistanceUnits.Mile), DistanceUnits.KM, 3.22)
-        self.AssertEventConversion(Event(2, DistanceUnits.KM), DistanceUnits.Mile, 1.24)
-
-    def AssertTimeConversion(self, time, targetUnit, expected):
+    # Legacy
+    def AssertTimeConversion(self, time, expectedTime):
         rpc = RunningPaceConverter()
         rpc.speed.time = RunningPaceConverter.ToBaseTime(time)
-        actualTime = rpc.GetTimeWithUnit(targetUnit)
-        self.assertEqual(round(actualTime.time, 2), round(expected, 2))
+        actualTime = rpc.GetTimeWithUnit(expectedTime.unit)
+        actualTime.time = round(actualTime.time, 2)
+        self.assertEqual(actualTime, expectedTime)
 
+    # Legacy
+    def test_GetEventWithUnit(self):
+        self.AssertEventConversion(Event(2, DistanceUnits.Mile), Event(3.22, DistanceUnits.KM))
+        self.AssertEventConversion(Event(2, DistanceUnits.KM), Event(1.24, DistanceUnits.Mile))
+
+    # Legacy
     def test_GetTimeWithUnit(self):
-        self.AssertTimeConversion(Time(2, TimeUnits.Hour), TimeUnits.Second, 7200)
-        self.AssertTimeConversion(Time(1000, TimeUnits.Second), TimeUnits.Hour, 0.28)
-        self.AssertTimeConversion(Time(7200, TimeUnits.Second), TimeUnits.Hour, 2)
+        self.AssertTimeConversion(Time(2, TimeUnits.Hour), Time(7200, TimeUnits.Second))
+        self.AssertTimeConversion(Time(1000, TimeUnits.Second), Time(0.28, TimeUnits.Hour))
+        self.AssertTimeConversion(Time(7200, TimeUnits.Second), Time(2, TimeUnits.Hour))
+
+    def AssertSpeedConversion(self, speed, expectedSpeed):
+        rpc = RunningPaceConverter(speed)
+        actualSpeed = rpc.GetSpeedInTargetUnits(expectedSpeed.event.unit, expectedSpeed.time.unit)
+        actualSpeed.event.distance = round(actualSpeed.event.distance, 2)
+        actualSpeed.time.time = round(actualSpeed.time.time, 2)
+        self.assertEqual(actualSpeed, expectedSpeed)
 
     def test_GetSpeedInTargetUnits(self):
         speed = Speed(Event(12, DistanceUnits.KM), Time(1, TimeUnits.Hour))
-        rpc = RunningPaceConverter(speed)
-        targetEventUnit = DistanceUnits.Meter
-        targetTimeUnit = TimeUnits.Second
-        speedInTargetUnits = rpc.GetSpeedInTargetUnits(targetEventUnit, targetTimeUnit)
-        self.assertEqual(round(speedInTargetUnits.event.distance, 2), 3.33)
-        self.assertEqual(speedInTargetUnits.event.unit, DistanceUnits.Meter)
-        self.assertEqual(speedInTargetUnits.time.time, 1)
-        self.assertEqual(speedInTargetUnits.time.unit, targetTimeUnit)
+        expectedSpeed = Speed(Event(3.33, DistanceUnits.Meter), Time(1, TimeUnits.Second))
+        self.AssertSpeedConversion(speed, expectedSpeed)
+
+        speed = Speed(Event(3.33, DistanceUnits.Meter), Time(1, TimeUnits.Second))
+        expectedSpeed = Speed(Event(11.99, DistanceUnits.KM), Time(1, TimeUnits.Hour))
+        self.AssertSpeedConversion(speed, expectedSpeed)
+
+        speed = Speed(Event(10, DistanceUnits.Mile), Time(1, TimeUnits.Hour))
+        expectedSpeed = Speed(Event(16.10, DistanceUnits.KM), Time(1, TimeUnits.Hour))
+        self.AssertSpeedConversion(speed, expectedSpeed)
+
+        speed = Speed(Event(10, DistanceUnits.KM), Time(1, TimeUnits.Hour))
+        expectedSpeed = Speed(Event(6.21, DistanceUnits.Mile), Time(1, TimeUnits.Hour))
+        self.AssertSpeedConversion(speed, expectedSpeed)
 
     def test_GetEventTimeWithSpeed(self):
         speed = Speed(Event(1, DistanceUnits.KM), Time(1, TimeUnits.Hour))

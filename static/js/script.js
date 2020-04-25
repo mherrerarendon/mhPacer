@@ -1,12 +1,4 @@
 $( document ).ready(function() {
-    $("#btnResult").on("click", function() {
-        getEventTimeWithSpeed($("#speedInput").val(), $("#targetEventInput").val());
-        // $("<p>")
-        //     .text($("#speedInput").val())
-        //     .addClass("crocodile")
-        //     .appendTo("#divResult");
-    });
-
     $("#speedInput").on("keydown", function(event) {
         startSpeedInputKeyDownTimer();
     });
@@ -14,13 +6,15 @@ $( document ).ready(function() {
     $("#targetEventInput").on("keydown", function(event) {
         startTargetEventInputKeyDownTimer();
     });
-
-    enableResultBtnIfNeeded();
 });
 
 function enableResultBtnIfNeeded() {
     const enable = ($("#divParsedSpeed").text() !== "" && $("#divParsedTargetEvent").text() !== "");
-    $("#btnResult").prop('disabled', !enable); 
+    if (enable) {
+        getEventTimeWithSpeed($("#speedInput").val(), $("#targetEventInput").val());
+    } else {
+        $("#divResult").text("");
+    }
 }
 
 function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
@@ -36,10 +30,33 @@ function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
         });
 }
 
+function getStrForUnitAmount(amount, unitStr) {
+    str = "";
+    if (amount > 0) {
+        str = amount.toString() + " " + unitStr;
+    }
+
+    if (amount > 1) {
+        str += "s";
+    }
+
+    return str;
+}
+
 function getStrFromTimeObj(timeObj) {
-    const time = timeObj.time;
-    const timeUnit = timeObj.unit;
-    return time + " " + timeUnit;
+    // Assume minutes for now
+    var secondsRemaining = Math.round(timeObj.time * 60);
+    const hours = Math.floor(secondsRemaining / 3600);
+    secondsRemaining = secondsRemaining % 3600;
+    console.log(secondsRemaining)
+    const minutes = Math.floor(secondsRemaining / 60);
+    secondsRemaining = secondsRemaining % 60;
+    console.log(secondsRemaining)
+    var timeStr = "Total time: ";
+    timeStr += getStrForUnitAmount(hours, "hour") + " ";
+    timeStr += getStrForUnitAmount(minutes, "minute") + " ";
+    timeStr += getStrForUnitAmount(secondsRemaining, "second");
+    return timeStr;
 }
 
 var speedInputTimer;

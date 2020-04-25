@@ -7,14 +7,14 @@
 {% block body %}
 <div class="content">
 	<h1>Running Pace Converter</h1>
-	<table>
+	<table id="mainTable">
 		<tbody>
 			<tr>
 				<td>
-					<label for="speedInput">Enter your speed</label>
+					<label class="inputLabel" for="speedInput">Your speed</label>
 				</td>
 				<td>
-					<label for="targetEventInput">Enter target event</label>
+					<label class="inputLabel" for="targetEventInput">Target event</label>
 				</td>
 			</tr>
 			<tr>
@@ -27,19 +27,15 @@
 			</tr>
 			<tr>
 				<td>
-					<div id="divParsedSpeed"></div>
+					<div class="outputLabel" id="divParsedSpeed"></div>
 				</td>
 				<td>
-					<div id="divParsedTargetEvent"></div>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					<button id="btnResult">Get Result</button>
+					<div class="outputLabel" id="divParsedTargetEvent"></div>
 				</td>
 			</tr>
 		</tbody>
 	</table>
+	<br>
 	<div id="divResult"></div>
 </div>
 {% endblock %}
