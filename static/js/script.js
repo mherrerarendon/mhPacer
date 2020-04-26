@@ -8,55 +8,13 @@ $( document ).ready(function() {
     });
 });
 
-function enableResultBtnIfNeeded() {
+function displayResultIfNeeded() {
     const enable = ($("#divParsedSpeed").text() !== "" && $("#divParsedTargetEvent").text() !== "");
     if (enable) {
         getEventTimeWithSpeed($("#speedInput").val(), $("#targetEventInput").val());
     } else {
         $("#divResult").text("");
     }
-}
-
-function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
-    const queryData = {speedStr: iSpeedStr, eventStr: iEventStr};
-    queryAPINameWithData("getEventTimeWithSpeed", queryData)
-        .then((data) => {
-            if (data.exitcode === 0) {
-                $("#divResult").text(getStrFromTimeObj(data.data));
-            } else {
-                console.log("got this back: " + data.data);
-                $("#divParsedTargetEvent").text("");
-            }
-        });
-}
-
-function getStrForUnitAmount(amount, unitStr) {
-    str = "";
-    if (amount > 0) {
-        str = amount.toString() + " " + unitStr;
-    }
-
-    if (amount > 1) {
-        str += "s";
-    }
-
-    return str;
-}
-
-function getStrFromTimeObj(timeObj) {
-    // Assume minutes for now
-    var secondsRemaining = Math.round(timeObj.time * 60);
-    const hours = Math.floor(secondsRemaining / 3600);
-    secondsRemaining = secondsRemaining % 3600;
-    console.log(secondsRemaining)
-    const minutes = Math.floor(secondsRemaining / 60);
-    secondsRemaining = secondsRemaining % 60;
-    console.log(secondsRemaining)
-    var timeStr = "Total time: ";
-    timeStr += getStrForUnitAmount(hours, "hour") + " ";
-    timeStr += getStrForUnitAmount(minutes, "minute") + " ";
-    timeStr += getStrForUnitAmount(secondsRemaining, "second");
-    return timeStr;
 }
 
 var speedInputTimer;
@@ -79,16 +37,22 @@ function startTargetEventInputKeyDownTimer() {
     }, timerWaitTime);
 }
 
-function getStrFromSpeedObj(speedObj) {
-    const distance = speedObj.event.distance;
-    const distanceUnit = speedObj.event.unit;
-    const time = speedObj.time.time;
-    const timeUnit = speedObj.time.unit;
-    return distance + " " + distanceUnit + " per " + timeUnit;
+function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
+    const queryData = {speedStr: iSpeedStr, eventStr: iEventStr};
+    queryAPINameWithData("getEventTimeWithSpeed", queryData)
+        .then((data) => {
+            if (data.exitcode === 0) {
+                $("#divResult").text(getStrFromTimeObj(data.data));
+            } else {
+                console.log("got this back: " + data.data);
+                $("#divParsedTargetEvent").text("");
+            }
+        });
 }
 
-function doAttemptParseSpeedStr(speedStr) {
-    parseSpeedStr(speedStr)
+function doAttemptParseSpeedStr(iSpeedStr) {
+    const queryData = {speedStr: iSpeedStr};
+    queryAPINameWithData("parseSpeedStr", queryData)
         .then((data) => {
             if (data.exitcode === 0) {
                 $("#divParsedSpeed").text(getStrFromSpeedObj(data.data));
@@ -96,23 +60,14 @@ function doAttemptParseSpeedStr(speedStr) {
                 $("#divParsedSpeed").text("");
             }
 
-            enableResultBtnIfNeeded();
+            displayResultIfNeeded();
         });
 };
 
-async function parseSpeedStr(iSpeedStr) {
-    const queryData = {speedStr: iSpeedStr};
-    return await queryAPINameWithData("parseSpeedStr", queryData);
-}
-
-function getStrFromEventObj(eventObj) {
-    const distance = eventObj.distance;
-    const distanceUnit = eventObj.unit;
-    return distance + " " + distanceUnit;
-}
 
 function doAttemptParseTargetEventStr(targetEventStr) {
-    parseTargetEventStr(targetEventStr)
+    const queryData = {eventStr: targetEventStr};
+    queryAPINameWithData("parseEventStr", queryData)
         .then((data) => {
             if (data.exitcode === 0) {
                 $("#divParsedTargetEvent").text(getStrFromEventObj(data.data));
@@ -120,29 +75,6 @@ function doAttemptParseTargetEventStr(targetEventStr) {
                 $("#divParsedTargetEvent").text("");
             }
 
-            enableResultBtnIfNeeded();
+            displayResultIfNeeded();
         });
-}
-
-async function parseTargetEventStr(targetEventStr) {
-    const queryData = {eventStr: targetEventStr};
-    return await queryAPINameWithData("parseEventStr", queryData);
-}
-
-function toQueryStr(object) {
-    var esc = encodeURIComponent;
-    var query = Object.keys(object)
-        .map(k => esc(k) + '=' + esc(object[k]))
-        .join('&');
-    return query;
-}
-
-async function queryAPINameWithData(apiName, data) {
-    hostName = "http://127.0.0.1:5000//api/";
-    apiVersion = "v1.0/";
-    const url = hostName + apiVersion + apiName + "?" + toQueryStr(data);
-    const response = await fetch(url, {
-        method: "GET"
-    });
-    return response.json();
 }
