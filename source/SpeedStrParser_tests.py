@@ -21,29 +21,60 @@ class TestStringMethods(unittest.TestCase):
         self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit(None), ErrorCodes.DISTANCE_UNIT_PARSE_ERR)
         self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit(''), ErrorCodes.DISTANCE_UNIT_PARSE_ERR)
         self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit('1'), ErrorCodes.DISTANCE_UNIT_PARSE_ERR)
-        self.assertEqual(Event.ParseDistanceUnit('m'), DistanceUnits.Mile)
-        self.assertEqual(Event.ParseDistanceUnit('M'), DistanceUnits.Mile)
+        self.assertEqual(Event.ParseDistanceUnit('m'), DistanceUnits.Meter)
+        self.assertEqual(Event.ParseDistanceUnit('M'), DistanceUnits.Meter)
         self.assertEqual(Event.ParseDistanceUnit('k'), DistanceUnits.KM)
 
     def test_ParseTimeUnit(self):
         self.AssertFuncRaisesException(lambda: Time.ParseTimeUnit(None), ErrorCodes.TIME_UNIT_PARSE_ERR)
         self.AssertFuncRaisesException(lambda: Time.ParseTimeUnit(''), ErrorCodes.TIME_UNIT_PARSE_ERR)
         self.AssertFuncRaisesException(lambda: Time.ParseTimeUnit('t'), ErrorCodes.TIME_UNIT_PARSE_ERR)
-        self.assertEqual(Time.ParseTimeUnit('h'), TimeUnits.Hour)
+
+        self.assertEqual(Time.ParseTimeUnit('hour'), TimeUnits.Hour)
+        self.assertEqual(Time.ParseTimeUnit('hours'), TimeUnits.Hour)
         self.assertEqual(Time.ParseTimeUnit('H'), TimeUnits.Hour)
+        self.assertEqual(Time.ParseTimeUnit('h'), TimeUnits.Hour)
+
+        self.assertEqual(Time.ParseTimeUnit('second'), TimeUnits.Second)
+        self.assertEqual(Time.ParseTimeUnit('seconds'), TimeUnits.Second)
+        self.assertEqual(Time.ParseTimeUnit('S'), TimeUnits.Second)
         self.assertEqual(Time.ParseTimeUnit('s'), TimeUnits.Second)
+
+        self.assertEqual(Time.ParseTimeUnit('minute'), TimeUnits.Minute)
+        self.assertEqual(Time.ParseTimeUnit('minutes'), TimeUnits.Minute)
+        self.assertEqual(Time.ParseTimeUnit('M'), TimeUnits.Minute)
+        self.assertEqual(Time.ParseTimeUnit('m'), TimeUnits.Minute)
 
     def test_ParseSpeedString(self):
         speed = Speed.ParseSpeedStr('12mph')
-        self.assertEqual(speed.event.distance, 12)
-        self.assertEqual(speed.event.unit, DistanceUnits.Mile)
-        self.assertEqual(speed.time.time, 1)
-        self.assertEqual(speed.time.unit, TimeUnits.Hour)
+        self.assertEqual(speed, Speed(Event(12, DistanceUnits.Mile), Time(1, TimeUnits.Hour)))
+
+        speed = Speed.ParseSpeedStr('10kph')
+        self.assertEqual(speed, Speed(Event(10, DistanceUnits.KM), Time(1, TimeUnits.Hour)))
+
+        speed = Speed.ParseSpeedStr('10mps')
+        self.assertEqual(speed, Speed(Event(10, DistanceUnits.Meter), Time(1, TimeUnits.Second)))
 
     def test_ParseEventString(self):
-        event = Event.ParseEventStr('12m')
-        self.assertEqual(event.distance, 12)
-        self.assertEqual(event.unit, DistanceUnits.Mile)
+        self.assertEqual(Event.ParseEventStr('12m'), Event(12, DistanceUnits.Meter))
+        self.assertEqual(Event.ParseEventStr('10k'), Event(10, DistanceUnits.KM))
+
+    def test_GetEventTimeDivider(self):
+        self.AssertFuncRaisesException(lambda: Speed.GetEventTimeDivider('per per'), ErrorCodes.PARSE_ERR)
+        self.AssertFuncRaisesException(lambda: Speed.GetEventTimeDivider('p p'), ErrorCodes.PARSE_ERR)
+        self.AssertFuncRaisesException(lambda: Speed.GetEventTimeDivider('/ /'), ErrorCodes.PARSE_ERR)
+
+        self.assertEqual(Speed.GetEventTimeDivider('per'), 'per')
+        self.assertEqual(Speed.GetEventTimeDivider('p'), 'p')
+        self.assertEqual(Speed.GetEventTimeDivider('/'), '/')
+
+        self.assertEqual(Speed.GetEventTimeDivider('something per something'), 'per')
+        self.assertEqual(Speed.GetEventTimeDivider('something p something'), 'p')
+        self.assertEqual(Speed.GetEventTimeDivider('something / something'), '/')
+
+        self.assertEqual(Speed.GetEventTimeDivider('somethingpersomething'), 'per')
+        self.assertEqual(Speed.GetEventTimeDivider('somethingpsomething'), 'p')
+        self.assertEqual(Speed.GetEventTimeDivider('something/something'), '/')
 
 
 if __name__ == '__main__':
