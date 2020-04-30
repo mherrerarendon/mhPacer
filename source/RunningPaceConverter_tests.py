@@ -63,6 +63,12 @@ class TestRunningPaceConverter(unittest.TestCase):
         actualTime = RunningPaceConverter.GetEventTimeWithSpeed(speed, event, TimeUnits.Hour)
         self.assertEqual(round(actualTime.time, 2), 1.61)
 
+    def test_GetPaceFromSpeed(self):
+        testSpeed = Speed(Event(6, DistanceUnits.Mile), Time(1, TimeUnits.Hour))
+        expectedPace = Pace(Time(10, TimeUnits.Minute), Event(1, DistanceUnits.Mile))
+        actualPace = RunningPaceConverter.GetPaceFromSpeed(testSpeed)
+        self.assertEqual(actualPace, expectedPace)
+
 
 if __name__ == '__main__':
     unittest.main()

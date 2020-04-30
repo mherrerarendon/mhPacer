@@ -6,6 +6,17 @@ $( document ).ready(function() {
     $("#targetEventInput").on("keydown", function(event) {
         startTargetEventInputKeyDownTimer();
     });
+
+    $('#selectSpeedPace').change(function () {
+        switch($(this).val()) {
+        case 'selectSpeed':
+            console.log("selected speed")
+            break;
+        case 'selectPace':
+            console.log("selected pace")
+            break;
+        }
+    })
 });
 
 function displayResultIfNeeded() {

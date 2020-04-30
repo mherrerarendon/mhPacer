@@ -21,7 +21,18 @@ class TestStringMethods(unittest.TestCase):
         self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit(None), ErrorCodes.DISTANCE_UNIT_PARSE_ERR)
         self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit(''), ErrorCodes.DISTANCE_UNIT_PARSE_ERR)
         self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit('1'), ErrorCodes.DISTANCE_UNIT_PARSE_ERR)
-        self.assertEqual(Event.ParseDistanceUnit('m'), DistanceUnits.Meter)
+
+        self.assertEqual(Event.ParseDistanceUnit('kilometer'), DistanceUnits.KM)
+        self.assertEqual(Event.ParseDistanceUnit('kilometers'), DistanceUnits.KM)
+
+        self.assertEqual(Event.ParseDistanceUnit('mile'), DistanceUnits.Mile)
+        self.assertEqual(Event.ParseDistanceUnit('miles'), DistanceUnits.Mile)
+
+        self.assertEqual(Event.ParseDistanceUnit('meter'), DistanceUnits.Meter)
+        self.assertEqual(Event.ParseDistanceUnit('meters'), DistanceUnits.Meter)
+
+        self.assertEqual(Event.ParseDistanceUnit('m', TimeUnits.Second), DistanceUnits.Meter)
+        self.assertEqual(Event.ParseDistanceUnit('m', TimeUnits.Hour), DistanceUnits.Mile)
         self.assertEqual(Event.ParseDistanceUnit('M'), DistanceUnits.Meter)
         self.assertEqual(Event.ParseDistanceUnit('k'), DistanceUnits.KM)
 
@@ -48,6 +59,13 @@ class TestStringMethods(unittest.TestCase):
     def test_ParseSpeedString(self):
         speed = Speed.ParseSpeedStr('12mph')
         self.assertEqual(speed, Speed(Event(12, DistanceUnits.Mile), Time(1, TimeUnits.Hour)))
+
+        speed = Speed.ParseSpeedStr('12 mph')
+        self.assertEqual(speed, Speed(Event(12, DistanceUnits.Mile), Time(1, TimeUnits.Hour)))
+
+        import pdb; pdb.set_trace()  # breakpoint aece1b11 //
+        speed = Speed.ParseSpeedStr('10 kilometer per hour')
+        self.assertEqual(speed, Speed(Event(10, DistanceUnits.KM), Time(1, TimeUnits.Hour)))
 
         speed = Speed.ParseSpeedStr('10kph')
         self.assertEqual(speed, Speed(Event(10, DistanceUnits.KM), Time(1, TimeUnits.Hour)))

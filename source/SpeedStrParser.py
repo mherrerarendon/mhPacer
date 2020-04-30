@@ -22,7 +22,7 @@ class Event:
 
     @staticmethod
     def ParseEventStr(eventStr, timeUnit=None):
-        match = re.search(r'(\d+)(\S)', eventStr)
+        match = re.search(r'(\d+)\s?(\S+)', eventStr)
         if match is None:
             raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse event string')
         event = Event()
@@ -140,7 +140,7 @@ class Speed:
     @staticmethod
     def GetEventAndTimeStr(speedStr):
         dividerStr = Speed.GetEventTimeDivider(speedStr)
-        reFormat = r'(\d+\S)\s?' + dividerStr + '\s?(\S)'
+        reFormat = r'(\d+\s?\S+)\s?' + dividerStr + '\s?(\S+)'
         match = re.search(reFormat, speedStr)
         if match is None:
             raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')

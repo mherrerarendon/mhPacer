@@ -63,3 +63,7 @@ class RunningPaceConverter:
         rpc = RunningPaceConverter(speed)
         speedInTargetUnits = rpc.GetSpeedInTargetUnits(event.unit, targetTimeUnit)
         return Time(event.distance / speedInTargetUnits.event.distance, targetTimeUnit)
+
+    @staticmethod
+    def GetPaceFromSpeed(speed):
+        pass
