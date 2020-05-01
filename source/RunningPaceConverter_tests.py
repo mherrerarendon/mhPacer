@@ -68,6 +68,10 @@ class TestRunningPaceConverter(unittest.TestCase):
         expectedPace = Pace(Time(10, TimeUnits.Minute), Event(1, DistanceUnits.Mile))
         actualPace = RunningPaceConverter.GetPaceFromSpeed(testSpeed)
         self.assertEqual(actualPace, expectedPace)
+        # Add more
+
+    def test_GetSpeedFromPace(self):
+        self.assertEqual(1, 2)
 
 
 if __name__ == '__main__':

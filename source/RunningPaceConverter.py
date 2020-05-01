@@ -66,4 +66,9 @@ class RunningPaceConverter:
 
     @staticmethod
     def GetPaceFromSpeed(speed):
-        pass
+        if speed.time.unit != TimeUnits.Hour:
+            raise Exception('Only time unit supported for speed->pace conversion is hours')
+        pace = Pace()
+        pace.time = Time(60 / speed.event.distance, TimeUnits.Minute)
+        pace.event = Event(1, speed.event.unit)
+        return pace

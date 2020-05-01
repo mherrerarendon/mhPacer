@@ -63,7 +63,6 @@ class TestStringMethods(unittest.TestCase):
         speed = Speed.ParseSpeedStr('12 mph')
         self.assertEqual(speed, Speed(Event(12, DistanceUnits.Mile), Time(1, TimeUnits.Hour)))
 
-        import pdb; pdb.set_trace()  # breakpoint aece1b11 //
         speed = Speed.ParseSpeedStr('10 kilometer per hour')
         self.assertEqual(speed, Speed(Event(10, DistanceUnits.KM), Time(1, TimeUnits.Hour)))
 

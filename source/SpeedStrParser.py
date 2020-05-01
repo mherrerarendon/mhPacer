@@ -20,9 +20,26 @@ class Event:
         else:
             return False
 
+    def Serialize(self):
+        serializeDistanceUnit = {DistanceUnits.Mile: 'mile',
+                                 DistanceUnits.KM: 'kilometer',
+                                 DistanceUnits.Meter: 'meter'}
+        return {
+            DISTANCE_KEY: self.distance,
+            UNIT_KEY: serializeDistanceUnit[self.unit]
+        }
+
+    @staticmethod
+    def GetReFormat(hasNumberValues=True):
+        if hasNumberValues:
+            return r'(\d+)\s?(\S+)'
+        else:
+            return r'(\S+)'
+
     @staticmethod
     def ParseEventStr(eventStr, timeUnit=None):
-        match = re.search(r'(\d+)\s?(\S+)', eventStr)
+        reFormat = Event.GetReFormat()
+        match = re.search(reFormat, eventStr)
         if match is None:
             raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse event string')
         event = Event()
@@ -56,15 +73,6 @@ class Event:
                 return unit
         raise RPCException(ErrorCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
 
-    def Serialize(self):
-        serializeDistanceUnit = {DistanceUnits.Mile: 'mile',
-                                 DistanceUnits.KM: 'kilometer',
-                                 DistanceUnits.Meter: 'meter'}
-        return {
-            DISTANCE_KEY: self.distance,
-            UNIT_KEY: serializeDistanceUnit[self.unit]
-        }
-
 
 class Time:
     def __init__(self, time=0, unit=None):
@@ -81,6 +89,22 @@ class Time:
                 self.unit == other.unit)
         else:
             return False
+
+    def Serialize(self):
+        serializeTimeUnit = {TimeUnits.Hour: 'hour',
+                             TimeUnits.Minute: 'minute',
+                             TimeUnits.Second: 'second'}
+        return {
+            TIME_KEY: self.time,
+            UNIT_KEY: serializeTimeUnit[self.unit]
+        }
+
+    @staticmethod
+    def GetReFormat(hasNumberValues=True):
+        if hasNumberValues:
+            return r'(\d+)\s?(\S+)'
+        else:
+            return r'(\S+)'
 
     def ParseTimeStr(timeStr):
         time = Time()
@@ -103,15 +127,6 @@ class Time:
                 return unit
         raise RPCException(ErrorCodes.TIME_UNIT_PARSE_ERR, 'Could not parse time unit')
 
-    def Serialize(self):
-        serializeTimeUnit = {TimeUnits.Hour: 'hour',
-                             TimeUnits.Minute: 'minute',
-                             TimeUnits.Second: 'second'}
-        return {
-            TIME_KEY: self.time,
-            UNIT_KEY: serializeTimeUnit[self.unit]
-        }
-
 
 class Speed:
     def __init__(self, event=None, time=None):
@@ -129,33 +144,6 @@ class Speed:
         else:
             return False
 
-    @staticmethod
-    def ParseSpeedStr(speedStr):
-        eventStr, timeStr = Speed.GetEventAndTimeStr(speedStr)
-        speed = Speed()
-        speed.time = Time.ParseTimeStr(timeStr)
-        speed.event = Event.ParseEventStr(eventStr, speed.time.unit)
-        return speed
-
-    @staticmethod
-    def GetEventAndTimeStr(speedStr):
-        dividerStr = Speed.GetEventTimeDivider(speedStr)
-        reFormat = r'(\d+\s?\S+)\s?' + dividerStr + '\s?(\S+)'
-        match = re.search(reFormat, speedStr)
-        if match is None:
-            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')
-        return match.group(1), match.group(2)
-
-    @staticmethod
-    def GetEventTimeDivider(speedStr):
-        possibleDividers = [r'per', r'p', r'/']
-        for divider in possibleDividers:
-            reFormat = r'\s?' + divider + r'\s?'
-            matchList = re.findall(reFormat, speedStr)
-            if len(matchList) == 1:
-                return divider
-        raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')
-
     def Serialize(self):
         return {
             EVENT_KEY: self.event.Serialize(),
@@ -167,3 +155,94 @@ class Speed:
         self.event.distance /= timeValue
         self.time.time /= timeValue
         return self
+
+    @staticmethod
+    def GetReFormat(dividerStr=''):
+        return Event.GetReFormat(True) + r'\s?' + dividerStr + r'\s?' + Time.GetReFormat(False)
+
+    @staticmethod
+    def ParseSpeedStr(speedStr):
+        eventStr, timeStr = Speed.GetEventAndTimeStr(speedStr)
+        speed = Speed()
+        speed.time = Time.ParseTimeStr(timeStr)
+        speed.event = Event.ParseEventStr(eventStr, speed.time.unit)
+        return speed
+
+    @staticmethod
+    def GetEventAndTimeStr(speedStr):
+        dividerStr = Speed.GetEventTimeDivider(speedStr)
+        reFormat = Speed.GetReFormat(dividerStr)
+        match = re.search(reFormat, speedStr)
+        if match is None:
+            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')
+        return match.group(1) + match.group(2), match.group(3)
+
+    @staticmethod
+    def GetEventTimeDivider(speedStr):
+        possibleDividers = [r'per', r'p', r'/']
+        for divider in possibleDividers:
+            reFormat = r'\s?' + divider + r'\s?'
+            matchList = re.findall(reFormat, speedStr)
+            if len(matchList) == 1:
+                return divider
+        raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')
+
+
+class Pace:
+    def __init__(self, time=None, event=None):
+        self.time = Time() if time is None else time
+        self.event = Event() if event is None else event
+
+    def __repr__(self):
+        return json.dumps(self.Serialize())
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return (
+                self.time == other.time and
+                self.event == other.event)
+        else:
+            return False
+
+    def Serialize(self):
+        return {
+            TIME_KEY: self.time.Serialize(),
+            EVENT_KEY: self.event.Serialize()
+        }
+
+    def Normalize(self):
+        distanceValue = self.event.distance
+        self.time.time /= distanceValue
+        self.event.distance /= distanceValue
+        return self
+
+    @staticmethod
+    def GetReFormat(dividerStr=''):
+        return Time.GetReFormat(True) + r'\s?' + dividerStr + r'\s?' + Event.GetReFormat(False)
+
+    @staticmethod
+    def GetTimeEventDivider(paceStr):
+        possibleDividers = [r'per', r'p', r'/']
+        for divider in possibleDividers:
+            reFormat = r'\s?' + divider + r'\s?'
+            matchList = re.findall(reFormat, paceStr)
+            if len(matchList) == 1:
+                return divider
+        return ''
+
+    @staticmethod
+    def GetTimeAndEventStr(paceStr):
+        dividerStr = Speed.GetEventTimeDivider(paceStr)
+        reFormat = Pace.GetReFormat(dividerStr)
+        match = re.search(reFormat, paceStr)
+        if match is None:
+            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse pace string')
+        return match.group(1) + match.group(2), match.group(3)
+
+    @staticmethod
+    def ParseSpeedStr(paceStr):
+        timeStr, eventStr = Pace.GetTimeAndEventStr(paceStr)
+        pace = Pace()
+        pace.time = Time.ParseTimeStr(timeStr)
+        pace.event = Event.ParseEventStr(eventStr, pace.time.unit)
+        return pace
