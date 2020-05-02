@@ -1,6 +1,6 @@
 $( document ).ready(function() {
-    $("#speedInput").on("keydown", function(event) {
-        startSpeedInputKeyDownTimer();
+    $("#speedPaceInput").on("keydown", function(event) {
+        startSpeedPaceInputKeyDownTimer();
     });
 
     $("#targetEventInput").on("keydown", function(event) {
@@ -20,9 +20,9 @@ $( document ).ready(function() {
 });
 
 function displayResultIfNeeded() {
-    const enable = ($("#divParsedSpeed").text() !== "" && $("#divParsedTargetEvent").text() !== "");
+    const enable = ($("#divParsedSpeedPace").text() !== "" && $("#divParsedTargetEvent").text() !== "");
     if (enable) {
-        getEventTimeWithSpeed($("#speedInput").val(), $("#targetEventInput").val());
+        getEventTimeWithSpeed($("#speedPaceInput").val(), $("#targetEventInput").val());
     } else {
         $("#divResult").text("");
     }
@@ -32,11 +32,11 @@ var speedInputTimer;
 var targetEventInputTimer;
 const timerWaitTime = 250;
 
-function startSpeedInputKeyDownTimer() {
+function startSpeedPaceInputKeyDownTimer() {
     clearTimeout(speedInputTimer)
     speedInputTimer = setTimeout(function() {
-        var fullStr = $("#speedInput").val();
-        doAttemptParseSpeedStr(fullStr);
+        var fullStr = $("#speedPaceInput").val();
+        doAttemptParseSpeedPaceStr(fullStr);
     }, timerWaitTime);
 }
 
@@ -61,14 +61,38 @@ function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
         });
 }
 
-function doAttemptParseSpeedStr(iSpeedStr) {
-    const queryData = {speedStr: iSpeedStr};
-    queryAPINameWithData("parseSpeedStr", queryData)
+function getApiNameAndQueryData(iSpeedPaceStr) {
+    switch($("#selectSpeedPace").val()) {
+        case 'selectSpeed':
+            const apiName = "parseSpeedStr";
+            const queryData = {speedStr: iSpeedPaceStr};
+            break;
+        case 'selectPace':
+            const apiName = "parsePaceStr";
+            const queryData = {paceStr: iSpeedPaceStr};
+            break;
+        }
+    return [apiName, queryData];
+}
+
+function displaySpeedPaceStrings(data) {
+    $("#divParsedSpeedPace").text(getStrFromSpeedObj(data.speed));
+    $("#divConversion").text(getStrFromPaceObj(data.pace));
+}
+
+function clearSpeedPaceStrings() {
+    $("#divParsedSpeedPace").text("");
+    $("#divConversion").text("");
+}
+
+function doAttemptParseSpeedPaceStr(iSpeedPaceStr) {
+    const [apiName, queryData] = getApiNameAndQueryData(iSpeedPaceStr);
+    queryAPINameWithData(apiName, queryData)
         .then((data) => {
             if (data.exitcode === 0) {
-                $("#divParsedSpeed").text(getStrFromSpeedObj(data.data));
+                displaySpeedPaceStrings(data.data);
             } else {
-                $("#divParsedSpeed").text("");
+                clearSpeedPaceStrings();
             }
 
             displayResultIfNeeded();

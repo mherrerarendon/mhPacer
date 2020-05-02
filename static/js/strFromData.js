@@ -41,6 +41,16 @@ function getStrFromSpeedObj(speedObj) {
     return speedStr;
 }
 
+function getStrFromPaceObj(paceObj) {
+    var paceStr = "";
+    paceStr += getStrForUnitAmount(paceObj.time.time, paceObj.time.unit) + " ";
+    paceStr += "per ";
+
+    // Assume 1 time unit for now
+    paceStr += paceObj.event.unit; 
+    return paceStr;
+}
+
 function getStrFromEventObj(eventObj) {
     return getStrForUnitAmount(eventObj.distance, eventObj.unit)
 }

@@ -63,15 +63,41 @@ class TestRunningPaceConverter(unittest.TestCase):
         actualTime = RunningPaceConverter.GetEventTimeWithSpeed(speed, event, TimeUnits.Hour)
         self.assertEqual(round(actualTime.time, 2), 1.61)
 
-    def test_GetPaceFromSpeed(self):
-        testSpeed = Speed(Event(6, DistanceUnits.Mile), Time(1, TimeUnits.Hour))
-        expectedPace = Pace(Time(10, TimeUnits.Minute), Event(1, DistanceUnits.Mile))
-        actualPace = RunningPaceConverter.GetPaceFromSpeed(testSpeed)
+    def AssertSpeedToPaceConversion(self, speed, expectedPace):
+        actualPace = RunningPaceConverter.GetPaceFromSpeed(speed)
+        actualPace.time.time = round(actualPace.time.time, 2)
         self.assertEqual(actualPace, expectedPace)
-        # Add more
+
+    def test_GetPaceFromSpeed(self):
+        speed = Speed(Event(6, DistanceUnits.Mile), Time(1, TimeUnits.Hour))
+        expectedPace = Pace(Time(10, TimeUnits.Minute), Event(1, DistanceUnits.Mile))
+        self.AssertSpeedToPaceConversion(speed, expectedPace)
+
+        speed = Speed(Event(7, DistanceUnits.Mile), Time(1, TimeUnits.Hour))
+        expectedPace = Pace(Time(8.57, TimeUnits.Minute), Event(1, DistanceUnits.Mile))
+        self.AssertSpeedToPaceConversion(speed, expectedPace)
+
+        speed = Speed(Event(8, DistanceUnits.KM), Time(1, TimeUnits.Hour))
+        expectedPace = Pace(Time(7.5, TimeUnits.Minute), Event(1, DistanceUnits.KM))
+        self.AssertSpeedToPaceConversion(speed, expectedPace)
+
+    def AssertPaceToSpeedConversion(self, pace, expectedSpeed):
+        actualSpeed = RunningPaceConverter.GetSpeedFromPace(pace)
+        actualSpeed.event.distance = round(actualSpeed.event.distance, 2)
+        self.assertEqual(actualSpeed, expectedSpeed)
 
     def test_GetSpeedFromPace(self):
-        self.assertEqual(1, 2)
+        pace = Pace(Time(10, TimeUnits.Minute), Event(1, DistanceUnits.Mile))
+        expectedSpeed = Speed(Event(6, DistanceUnits.Mile), Time(1, TimeUnits.Hour))
+        self.AssertPaceToSpeedConversion(pace, expectedSpeed)
+
+        pace = Pace(Time(8.57, TimeUnits.Minute), Event(1, DistanceUnits.Mile))
+        expectedSpeed = Speed(Event(7, DistanceUnits.Mile), Time(1, TimeUnits.Hour))
+        self.AssertPaceToSpeedConversion(pace, expectedSpeed)
+
+        pace = Pace(Time(7.5, TimeUnits.Minute), Event(1, DistanceUnits.KM))
+        expectedSpeed = Speed(Event(8, DistanceUnits.KM), Time(1, TimeUnits.Hour))
+        self.AssertPaceToSpeedConversion(pace, expectedSpeed)
 
 
 if __name__ == '__main__':

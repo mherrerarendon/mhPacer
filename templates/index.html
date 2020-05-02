@@ -11,7 +11,7 @@
 		<tbody>
 			<tr>
 				<td>
-					<label class="inputLabel" for="speedInput">Your </label>
+					<label class="inputLabel" for="speedPaceInput">Your </label>
 					<select id="selectSpeedPace">
 						<option value="selectSpeed">speed</option>
 						<option value="selectPace">pace</option>
@@ -23,7 +23,7 @@
 			</tr>
 			<tr>
 				<td>
-					<input type="text" id="speedInput">
+					<input type="text" id="speedPaceInput">
 				</td>
 				<td>
 					<input type="text" id="targetEventInput">
@@ -31,7 +31,7 @@
 			</tr>
 			<tr>
 				<td>
-					<div class="outputLabel" id="divParsedSpeed"></div>
+					<div class="outputLabel" id="divParsedSpeedPace"></div>
 				</td>
 				<td>
 					<div class="outputLabel" id="divParsedTargetEvent"></div>
@@ -40,6 +40,7 @@
 		</tbody>
 	</table>
 	<br>
+	<div id="divConversion"></div>
 	<div id="divResult"></div>
 </div>
 {% endblock %}
