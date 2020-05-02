@@ -72,6 +72,10 @@ class TestStringMethods(unittest.TestCase):
         speed = Speed.ParseSpeedStr('10mps')
         self.assertEqual(speed, Speed(Event(10, DistanceUnits.Meter), Time(1, TimeUnits.Second)))
 
+        # still fails
+        speed = Speed.ParseSpeedStr('12.5 mph')
+        self.assertEqual(speed, Speed(Event(12.5, DistanceUnits.Mile), Time(1, TimeUnits.Hour)))
+
     def test_ParseEventString(self):
         self.assertEqual(Event.ParseEventStr('12m'), Event(12, DistanceUnits.Meter))
         self.assertEqual(Event.ParseEventStr('10k'), Event(10, DistanceUnits.KM))
@@ -92,6 +96,9 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(Speed.GetEventTimeDivider('somethingpersomething'), 'per')
         self.assertEqual(Speed.GetEventTimeDivider('somethingpsomething'), 'p')
         self.assertEqual(Speed.GetEventTimeDivider('something/something'), '/')
+
+    def test_ParsePaceStr(self):
+        self.assertEqual(1, 2)
 
 
 if __name__ == '__main__':

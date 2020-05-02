@@ -53,7 +53,7 @@ function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
     queryAPINameWithData("getEventTimeWithSpeed", queryData)
         .then((data) => {
             if (data.exitcode === 0) {
-                $("#divResult").text(getStrFromTimeObj(data.data));
+                $("#divResult").text("Event time: " + getStrFromTimeObj(data.data));
             } else {
                 console.log("got this back: " + data.data);
                 $("#divParsedTargetEvent").text("");
@@ -62,22 +62,32 @@ function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
 }
 
 function getApiNameAndQueryData(iSpeedPaceStr) {
+    var apiName = null;
+    var queryData = null;
     switch($("#selectSpeedPace").val()) {
         case 'selectSpeed':
-            const apiName = "parseSpeedStr";
-            const queryData = {speedStr: iSpeedPaceStr};
+            apiName = "parseSpeedStr";
+            queryData = {speedStr: iSpeedPaceStr};
             break;
         case 'selectPace':
-            const apiName = "parsePaceStr";
-            const queryData = {paceStr: iSpeedPaceStr};
+            apiName = "parsePaceStr";
+            queryData = {paceStr: iSpeedPaceStr};
             break;
         }
     return [apiName, queryData];
 }
 
 function displaySpeedPaceStrings(data) {
-    $("#divParsedSpeedPace").text(getStrFromSpeedObj(data.speed));
-    $("#divConversion").text(getStrFromPaceObj(data.pace));
+    switch($("#selectSpeedPace").val()) {
+        case 'selectSpeed':
+            $("#divParsedSpeedPace").text(getStrFromSpeedObj(data.speed));
+            $("#divConversion").text("Pace: " + getStrFromPaceObj(data.pace));
+            break;
+        case 'selectPace':
+            $("#divParsedSpeedPace").text(getStrFromPaceObj(data.pace));
+            $("#divConversion").text("Speed: " + getStrFromSpeedObj(data.speed));
+            break;
+        }
 }
 
 function clearSpeedPaceStrings() {

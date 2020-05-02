@@ -85,8 +85,8 @@ class Time:
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return (
-                self.time == other.time and
-                self.unit == other.unit)
+                    self.time == other.time and
+                    self.unit == other.unit)
         else:
             return False
 
@@ -240,7 +240,7 @@ class Pace:
         return match.group(1) + match.group(2), match.group(3)
 
     @staticmethod
-    def ParseSpeedStr(paceStr):
+    def ParsePaceStr(paceStr):
         timeStr, eventStr = Pace.GetTimeAndEventStr(paceStr)
         pace = Pace()
         pace.time = Time.ParseTimeStr(timeStr)

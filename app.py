@@ -43,10 +43,10 @@ def parsePaceStr():
     try:
         paceStr = request.args.get('paceStr')
         pace = Pace.ParsePaceStr(paceStr)
-        speed = RunningPaceConverter.GetSpeedFromPace(speed) left off here
+        speed = RunningPaceConverter.GetSpeedFromPace(pace)
         response['data'] = {}
-        response['data']['speed'] = speed.Serialize()
         response['data']['pace'] = pace.Serialize()
+        response['data']['speed'] = speed.Serialize()
         response['exitcode'] = 0
     except RPCException as e:
         response['exitcode'] = e.error_code.value
@@ -82,20 +82,6 @@ def getEventTimeWithSpeed():
         response['exitcode'] = e.error_code.value
         response['data'] = repr(e)
     return jsonify(response)
-
-
-# @app.route('/api/v1.0/getPaceFromSpeed', methods=['GET'])
-# def getPaceFromSpeed():
-#     response = {}
-#     try:
-#         speed = Speed.ParseSpeedStr(request.args.get('speedStr'))
-#         pace = RunningPaceConverter.GetPaceFromSpeed(speed)
-#         response['data'] = pace.Serialize()
-#         response['exitcode'] = 0
-#     except RPCException as e:
-#         response['exitcode'] = e.error_code.value
-#         response['data'] = repr(e)
-#     return jsonify(response)
 
 
 if __name__ == '__main__':

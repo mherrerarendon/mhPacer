@@ -24,7 +24,7 @@ function getStrFromTimeObj(timeObj) {
     // Assume timeObj.time is in minutes for now
     const totalSeconds = Math.round(timeObj.time * 60);
     const [hours, minutes, seconds] = getHourMinSecValues(totalSeconds);
-    var timeStr = "Total time: ";
+    var timeStr = "";
     timeStr += getStrForUnitAmount(hours, "hour") + " ";
     timeStr += getStrForUnitAmount(minutes, "minute") + " ";
     timeStr += getStrForUnitAmount(seconds, "second");
@@ -33,7 +33,8 @@ function getStrFromTimeObj(timeObj) {
 
 function getStrFromSpeedObj(speedObj) {
     var speedStr = "";
-    speedStr += getStrForUnitAmount(speedObj.event.distance, speedObj.event.unit) + " ";
+    distance = round2Decimals(speedObj.event.distance);
+    speedStr += getStrForUnitAmount(distance, speedObj.event.unit) + " ";
     speedStr += "per ";
 
     // Assume 1 time unit for now
@@ -41,9 +42,14 @@ function getStrFromSpeedObj(speedObj) {
     return speedStr;
 }
 
+function round2Decimals(myFloat) {
+    return Math.round(myFloat * 100) / 100  // result .12
+}
+
 function getStrFromPaceObj(paceObj) {
     var paceStr = "";
-    paceStr += getStrForUnitAmount(paceObj.time.time, paceObj.time.unit) + " ";
+    time = round2Decimals(paceObj.time.time);
+    paceStr += getStrForUnitAmount(time, paceObj.time.unit) + " ";
     paceStr += "per ";
 
     // Assume 1 time unit for now
