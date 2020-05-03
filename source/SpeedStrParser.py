@@ -61,32 +61,10 @@ class Event:
     @staticmethod
     def ParseEventStr(eventStr, timeUnit=None):
         distance, unitStr = GetValueAndUnitStr(eventStr)
-        # reFormat = GetEventAndPaceReFormat(forceNumberValues=False, theStr=eventStr)
-        # match = re.search(reFormat, eventStr)
-        # if match is None or match.groups() > 2:
-        #     raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse event string')
-        # if match.groups() == 1:
-        #     # The groups match is the units, and there is no number, which means 1
-        #     distanceStr = '1'
-        #     unitStr = match.group(1)
-        # elif match.groups() == 2:
-        #     distanceStr = match.group(1)
-        #     unitStr = match.group(2)
         event = Event()
         event.distance = distance
         event.unit = Event.ParseDistanceUnit(unitStr, timeUnit)
         return event
-
-    @staticmethod
-    def ParseDistanceStr(distanceStr):
-        value = None
-        if distanceStr is None:
-            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse value')
-        try:
-            value = int(distanceStr)
-        except Exception:
-            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse value')
-        return value
 
     @staticmethod
     def ParseDistanceUnit(distanceUnitStr, timeUnit=None):
@@ -130,11 +108,10 @@ class Time:
         }
 
     def ParseTimeStr(timeStr):
-        reFormat = GetEventAndPaceReFormat(forceNumberValues=False, theStr=timeStr)
-        match = re.search(reFormat, timeStr)
+        timeVal, unitStr = GetValueAndUnitStr(timeStr)
         time = Time()
-        time.time = 1  # Assume 1 for time value for now
-        time.unit = Time.ParseTimeUnit(timeStr)
+        time.time = timeVal
+        time.unit = Time.ParseTimeUnit(unitStr)
         return time
 
     @staticmethod

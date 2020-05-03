@@ -107,8 +107,6 @@ function clearSpeedPaceStrings() {
 
 function doAttemptParseSpeedPaceStr(iSpeedPaceStr) {
     const [apiName, queryData] = getApiNameAndQueryDataForSpeedPace(iSpeedPaceStr);
-    console.log(apiName);
-    console.log(queryData);
     queryAPINameWithData(apiName, queryData)
         .then((data) => {
             if (data.exitcode === 0) {
