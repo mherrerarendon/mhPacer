@@ -5,7 +5,7 @@ from SpeedStrParser import *
 from Types import *
 
 
-class TestStringMethods(unittest.TestCase):
+class TestSpeedStrParser(unittest.TestCase):
     def AssertFuncRaisesException(self, func, exception):
         with self.assertRaises(RPCException) as e:
             func()
