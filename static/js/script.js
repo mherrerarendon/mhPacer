@@ -8,14 +8,7 @@ $( document ).ready(function() {
     });
 
     $('#selectSpeedPace').change(function () {
-        switch($(this).val()) {
-        case 'selectSpeed':
-            console.log("selected speed")
-            break;
-        case 'selectPace':
-            console.log("selected pace")
-            break;
-        }
+        switchBetweenPaceAndSpeedIfNeeded();
     })
 });
 
@@ -55,13 +48,12 @@ function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
             if (data.exitcode === 0) {
                 $("#divResult").text("Event time: " + getStrFromTimeObj(data.data));
             } else {
-                console.log("got this back: " + data.data);
-                $("#divParsedTargetEvent").text("");
+                $("#divResult").text("");
             }
         });
 }
 
-function getApiNameAndQueryData(iSpeedPaceStr) {
+function getApiNameAndQueryDataForSpeedPace(iSpeedPaceStr) {
     var apiName = null;
     var queryData = null;
     switch($("#selectSpeedPace").val()) {
@@ -77,17 +69,35 @@ function getApiNameAndQueryData(iSpeedPaceStr) {
     return [apiName, queryData];
 }
 
-function displaySpeedPaceStrings(data) {
+function updateSpeedPaceStringsWithData(data) {
+    var parsedSpeedPace = null;
+    var conversionLabel = null;
+    var conversion = null;
     switch($("#selectSpeedPace").val()) {
         case 'selectSpeed':
-            $("#divParsedSpeedPace").text(getStrFromSpeedObj(data.speed));
-            $("#divConversion").text("Pace: " + getStrFromPaceObj(data.pace));
+            parsedSpeedPace = getStrFromSpeedObj(data.speed)
+            conversionLabel = "Pace: ";
+            conversion = getStrFromPaceObj(data.pace);
             break;
         case 'selectPace':
-            $("#divParsedSpeedPace").text(getStrFromPaceObj(data.pace));
-            $("#divConversion").text("Speed: " + getStrFromSpeedObj(data.speed));
+            parsedSpeedPace = getStrFromPaceObj(data.pace);
+            conversionLabel = "Speed: ";
+            conversion = getStrFromSpeedObj(data.speed);
             break;
         }
+
+    $("#divParsedSpeedPace").text(parsedSpeedPace);
+    $("#divConversion").text(conversionLabel);
+    $("<span>")
+        .text(conversion)
+        .attr("id", "spanConversion")
+        .appendTo("#divConversion");
+}
+
+function switchBetweenPaceAndSpeedIfNeeded() {
+    const newSpeedPaceStr = $("#spanConversion").text();
+    $("#speedPaceInput").val(newSpeedPaceStr);
+    doAttemptParseSpeedPaceStr(newSpeedPaceStr);
 }
 
 function clearSpeedPaceStrings() {
@@ -96,11 +106,13 @@ function clearSpeedPaceStrings() {
 }
 
 function doAttemptParseSpeedPaceStr(iSpeedPaceStr) {
-    const [apiName, queryData] = getApiNameAndQueryData(iSpeedPaceStr);
+    const [apiName, queryData] = getApiNameAndQueryDataForSpeedPace(iSpeedPaceStr);
+    console.log(apiName);
+    console.log(queryData);
     queryAPINameWithData(apiName, queryData)
         .then((data) => {
             if (data.exitcode === 0) {
-                displaySpeedPaceStrings(data.data);
+                updateSpeedPaceStringsWithData(data.data);
             } else {
                 clearSpeedPaceStrings();
             }
