@@ -8,14 +8,28 @@ $( document ).ready(function() {
     });
 
     $('#selectSpeedPace').change(function () {
-        switchBetweenPaceAndSpeedIfNeeded();
+        switchBetweenPaceAndSpeed();
     })
 });
+
+function getCurrentSpeedStr() {
+    var speedStr = null;
+    switch($("#selectSpeedPace").val()) {
+        case 'selectSpeed':
+            speedStr = $("#speedPaceInput").val();
+            break;
+        case 'selectPace':
+            speedStr = $("#divConversion").text();
+            break;
+        }
+    return speedStr;
+}
 
 function displayResultIfNeeded() {
     const enable = ($("#divParsedSpeedPace").text() !== "" && $("#divParsedTargetEvent").text() !== "");
     if (enable) {
-        getEventTimeWithSpeed($("#speedPaceInput").val(), $("#targetEventInput").val());
+        speedStr = getCurrentSpeedStr();
+        getEventTimeWithSpeed(speedStr, $("#targetEventInput").val());
     } else {
         $("#divResult").text("");
     }
@@ -94,7 +108,7 @@ function updateSpeedPaceStringsWithData(data) {
         .appendTo("#divConversion");
 }
 
-function switchBetweenPaceAndSpeedIfNeeded() {
+function switchBetweenPaceAndSpeed() {
     const newSpeedPaceStr = $("#spanConversion").text();
     $("#speedPaceInput").val(newSpeedPaceStr);
     doAttemptParseSpeedPaceStr(newSpeedPaceStr);
