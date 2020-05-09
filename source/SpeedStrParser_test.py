@@ -66,9 +66,8 @@ class TestSpeedStrParser(unittest.TestCase):
         speed = Speed.ParseSpeedStr('10mps')
         self.assertEqual(speed, Speed(Event(10, DistanceUnits.Meter), Time(1, TimeUnits.Second)))
 
-        # broken
-        # speed = Speed.ParseSpeedStr('12.5 mph')
-        # self.assertEqual(speed, Speed(Event(12.5, DistanceUnits.Mile), Time(1, TimeUnits.Hour)))
+        speed = Speed.ParseSpeedStr('12.5 mph')
+        self.assertEqual(speed, Speed(Event(12.5, DistanceUnits.Mile), Time(1, TimeUnits.Hour)))
 
     def test_ParseEventString(self):
         self.assertEqual(Event.ParseEventStr('12m'), Event(12, DistanceUnits.Meter))
@@ -97,17 +96,19 @@ class TestSpeedStrParser(unittest.TestCase):
         self.assertEqual(actualValue, expectedValue)
         self.assertEqual(actualUnitStr, expectedUnitStr)
 
-    def test_GetValueAndUnitStr(self):
-        self.AssertValueAndUnitStr(GetValueAndUnitStr('12 miles'), (12, 'miles'))
-        self.AssertValueAndUnitStr(GetValueAndUnitStr('12miles'), (12, 'miles'))
-        self.AssertValueAndUnitStr(GetValueAndUnitStr('12m'), (12, 'm'))
+    def test_GetValueAndUnitFromStr(self):
+        self.AssertValueAndUnitStr(GetValueAndUnitFromStr('12 miles'), (12, 'miles'))
+        self.AssertValueAndUnitStr(GetValueAndUnitFromStr('12miles'), (12, 'miles'))
+        self.AssertValueAndUnitStr(GetValueAndUnitFromStr('12m'), (12, 'm'))
 
-        self.AssertValueAndUnitStr(GetValueAndUnitStr('2 kilometers'), (2, 'kilometers'))
-        self.AssertValueAndUnitStr(GetValueAndUnitStr('2kilometers'), (2, 'kilometers'))
-        self.AssertValueAndUnitStr(GetValueAndUnitStr('2 k'), (2, 'k'))
+        self.AssertValueAndUnitStr(GetValueAndUnitFromStr('2 kilometers'), (2, 'kilometers'))
+        self.AssertValueAndUnitStr(GetValueAndUnitFromStr('2kilometers'), (2, 'kilometers'))
+        self.AssertValueAndUnitStr(GetValueAndUnitFromStr('2 k'), (2, 'k'))
 
-        self.AssertValueAndUnitStr(GetValueAndUnitStr('2 minutes'), (2, 'minutes'))
-        self.AssertValueAndUnitStr(GetValueAndUnitStr('2foo'), (2, 'foo'))
+        self.AssertValueAndUnitStr(GetValueAndUnitFromStr('2 minutes'), (2, 'minutes'))
+        self.AssertValueAndUnitStr(GetValueAndUnitFromStr('2foo'), (2, 'foo'))
+
+        self.AssertValueAndUnitStr(GetValueAndUnitFromStr('2.1 minutes'), (2.1, 'minutes'))
 
     def test_ParsePaceStr(self):
         pace = Pace.ParsePaceStr('12 minute mile')
@@ -124,6 +125,9 @@ class TestSpeedStrParser(unittest.TestCase):
 
         pace = Pace.ParsePaceStr('12min/mile')
         self.assertEqual(pace, Pace(Time(12, TimeUnits.Minute), Event(1, DistanceUnits.Mile)))
+
+        pace = Pace.ParsePaceStr('12.1min/mile')
+        self.assertEqual(pace, Pace(Time(12.1, TimeUnits.Minute), Event(1, DistanceUnits.Mile)))
 
 
 if __name__ == '__main__':

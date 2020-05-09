@@ -5,18 +5,18 @@ from Types import *
 
 
 def GetSpeedAndPaceReFormat(dividerStr=''):
-    return GetEventAndPaceReFormat(forceNumberValues=True) + r'\s?' + dividerStr + r'\s?' + GetEventAndPaceReFormat(forceNumberValues=False)
+    return GetValueAndUnitReFormat(forceNumberValues=True) + r'\s?' + dividerStr + r'\s?' + GetValueAndUnitReFormat(forceNumberValues=False)
 
 
-def GetEventAndPaceReFormat(forceNumberValues=False, theStr=None):
+def GetValueAndUnitReFormat(forceNumberValues=False, theStr=None):
     if forceNumberValues or (theStr is not None and re.search(r'\d', theStr)):
-        return r'(\d+)\s?(\S+)'
+        return r'(\d+\.?\d*)\s?(\S+)'
     else:
         return r'(\S+)'
 
 
-def GetValueAndUnitStr(parseStr):
-    reFormat = GetEventAndPaceReFormat(forceNumberValues=False, theStr=parseStr)
+def GetValueAndUnitFromStr(parseStr):
+    reFormat = GetValueAndUnitReFormat(forceNumberValues=False, theStr=parseStr)
     match = re.search(reFormat, parseStr)
     if match is None or len(match.groups()) > 2:
         raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse event string')
@@ -27,6 +27,8 @@ def GetValueAndUnitStr(parseStr):
     elif len(match.groups()) == 2:
         try:
             value = int(match.group(1))
+        except ValueError:
+            value = float(match.group(1))
         except Exception:
             raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse value')
         unitStr = match.group(2)
@@ -60,7 +62,7 @@ class Event:
 
     @staticmethod
     def ParseEventStr(eventStr, timeUnit=None):
-        distance, unitStr = GetValueAndUnitStr(eventStr)
+        distance, unitStr = GetValueAndUnitFromStr(eventStr)
         event = Event()
         event.distance = distance
         event.unit = Event.ParseDistanceUnit(unitStr, timeUnit)
@@ -108,7 +110,7 @@ class Time:
         }
 
     def ParseTimeStr(timeStr):
-        timeVal, unitStr = GetValueAndUnitStr(timeStr)
+        timeVal, unitStr = GetValueAndUnitFromStr(timeStr)
         time = Time()
         time.time = timeVal
         time.unit = Time.ParseTimeUnit(unitStr)
