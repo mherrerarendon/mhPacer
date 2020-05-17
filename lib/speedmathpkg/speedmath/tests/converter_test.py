@@ -8,17 +8,17 @@ from speedmath.common import DistanceUnits, TimeUnits
 class TestRunningPaceConverter(unittest.TestCase):
     # Legacy
     def assertEventConversion(self, event, expectedEvent):
-        rpc = Converter()
-        rpc.speed.event = Converter.toBaseEvent(event)
-        actualEvent = rpc.getEventWithUnit(expectedEvent.unit)
+        converter = Converter()
+        converter.speed.event = Converter.toBaseEvent(event)
+        actualEvent = converter.getEventWithUnit(expectedEvent.unit)
         actualEvent.distance = round(actualEvent.distance, 2)
         self.assertEqual(actualEvent, expectedEvent)
 
     # Legacy
     def assertTimeConversion(self, time, expectedTime):
-        rpc = Converter()
-        rpc.speed.time = Converter.toBaseTime(time)
-        actualTime = rpc.getTimeWithUnit(expectedTime.unit)
+        converter = Converter()
+        converter.speed.time = Converter.toBaseTime(time)
+        actualTime = converter.getTimeWithUnit(expectedTime.unit)
         actualTime.time = round(actualTime.time, 2)
         self.assertEqual(actualTime, expectedTime)
 
@@ -34,8 +34,8 @@ class TestRunningPaceConverter(unittest.TestCase):
         self.assertTimeConversion(Time(7200, TimeUnits.Second), Time(2, TimeUnits.Hour))
 
     def assertSpeedConversion(self, speed, expectedSpeed):
-        rpc = Converter(speed)
-        actualSpeed = rpc.getSpeedInTargetUnits(expectedSpeed.event.unit, expectedSpeed.time.unit)
+        converter = Converter(speed)
+        actualSpeed = converter.getSpeedInTargetUnits(expectedSpeed.event.unit, expectedSpeed.time.unit)
         actualSpeed.event.distance = round(actualSpeed.event.distance, 2)
         actualSpeed.time.time = round(actualSpeed.time.time, 2)
         self.assertEqual(actualSpeed, expectedSpeed)

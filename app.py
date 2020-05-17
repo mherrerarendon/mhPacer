@@ -1,15 +1,8 @@
 from flask import Flask, render_template, request, jsonify
-import os
-import sys
-
-scriptDir = os.path.dirname(os.path.realpath(__file__))
-sourceDir = os.path.abspath(os.path.join(scriptDir, 'source'))
-sys.path.append(sourceDir)
-
-from ErrorCodes import RPCException
-from RunningPaceConverter import RunningPaceConverter
-from types import *
-from common import *
+from speedmath.errCodes import smException
+from speedmath.converter import Converter
+from speedmath.types import Speed, Pace, Event
+from speedmath.common import TimeUnits
 
 app = Flask(__name__)
 
@@ -25,13 +18,13 @@ def parseSpeedStr():
     response = {}
     try:
         speedStr = request.args.get('speedStr')
-        speed = Speed.ParseSpeedStr(speedStr)
-        pace = RunningPaceConverter.GetPaceFromSpeed(speed)
+        speed = Speed.parseSpeedStr(speedStr)
+        pace = Converter.getPaceFromSpeed(speed)
         response['data'] = {}
-        response['data']['speed'] = speed.Serialize()
-        response['data']['pace'] = pace.Serialize()
+        response['data']['speed'] = speed.serialize()
+        response['data']['pace'] = pace.serialize()
         response['exitcode'] = 0
-    except RPCException as e:
+    except smException as e:
         response['exitcode'] = e.error_code.value
         response['data'] = repr(e)
     return jsonify(response)
@@ -42,13 +35,13 @@ def parsePaceStr():
     response = {}
     try:
         paceStr = request.args.get('paceStr')
-        pace = Pace.ParsePaceStr(paceStr)
-        speed = RunningPaceConverter.GetSpeedFromPace(pace)
+        pace = Pace.parsePaceStr(paceStr)
+        speed = Converter.getSpeedFromPace(pace)
         response['data'] = {}
-        response['data']['pace'] = pace.Serialize()
-        response['data']['speed'] = speed.Serialize()
+        response['data']['pace'] = pace.serialize()
+        response['data']['speed'] = speed.serialize()
         response['exitcode'] = 0
-    except RPCException as e:
+    except smException as e:
         response['exitcode'] = e.error_code.value
         response['data'] = repr(e)
     return jsonify(response)
@@ -59,9 +52,9 @@ def parseTargetEventStr():
     response = {}
     try:
         targetEventStr = request.args.get('eventStr')
-        response['data'] = Event.ParseEventStr(targetEventStr).Serialize()
+        response['data'] = Event.parseEventStr(targetEventStr).serialize()
         response['exitcode'] = 0
-    except RPCException as e:
+    except smException as e:
         response['exitcode'] = e.error_code.value
         response['data'] = repr(e)
     return jsonify(response)
@@ -71,14 +64,14 @@ def parseTargetEventStr():
 def getEventTimeWithSpeed():
     response = {}
     try:
-        speed = Speed.ParseSpeedStr(request.args.get('speedStr'))
-        targetEvent = Event.ParseEventStr(request.args.get('eventStr'))
+        speed = Speed.parseSpeedStr(request.args.get('speedStr'))
+        targetEvent = Event.parseEventStr(request.args.get('eventStr'))
 
         # Assume client wants response in minutes
-        time = RunningPaceConverter.GetEventTimeWithSpeed(speed, targetEvent, TimeUnits.Minute)
-        response['data'] = time.Serialize()
+        time = Converter.getEventTimeWithSpeed(speed, targetEvent, TimeUnits.Minute)
+        response['data'] = time.serialize()
         response['exitcode'] = 0
-    except RPCException as e:
+    except smException as e:
         response['exitcode'] = e.error_code.value
         response['data'] = repr(e)
     return jsonify(response)
