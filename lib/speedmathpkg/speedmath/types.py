@@ -10,7 +10,7 @@ class Event:
         self.unit = unit
 
     def __repr__(self):
-        return json.dumps(self.Serialize())
+        return json.dumps(self.serialize())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -20,7 +20,7 @@ class Event:
         else:
             return False
 
-    def Serialize(self):
+    def serialize(self):
         serializeDistanceUnit = {DistanceUnits.Mile: 'mile',
                                  DistanceUnits.KM: 'kilometer',
                                  DistanceUnits.Meter: 'meter'}
@@ -30,15 +30,15 @@ class Event:
         }
 
     @staticmethod
-    def ParseEventStr(eventStr, timeUnit=None):
+    def parseEventStr(eventStr, timeUnit=None):
         distance, unitStr = GetValueAndUnitFromStr(eventStr)
         event = Event()
         event.distance = distance
-        event.unit = Event.ParseDistanceUnit(unitStr, timeUnit)
+        event.unit = Event.parseDistanceUnit(unitStr, timeUnit)
         return event
 
     @staticmethod
-    def ParseDistanceUnit(distanceUnitStr, timeUnit=None):
+    def parseDistanceUnit(distanceUnitStr, timeUnit=None):
         if distanceUnitStr is None:
             raise smException(errCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
         distanceStrToEnum = {'mile': DistanceUnits.Mile,
@@ -59,7 +59,7 @@ class Time:
         self.unit = unit
 
     def __repr__(self):
-        return json.dumps(self.Serialize())
+        return json.dumps(self.serialize())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -69,7 +69,7 @@ class Time:
         else:
             return False
 
-    def Serialize(self):
+    def serialize(self):
         serializeTimeUnit = {TimeUnits.Hour: 'hour',
                              TimeUnits.Minute: 'minute',
                              TimeUnits.Second: 'second'}
@@ -78,15 +78,15 @@ class Time:
             UNIT_KEY: serializeTimeUnit[self.unit]
         }
 
-    def ParseTimeStr(timeStr):
+    def parseTimeStr(timeStr):
         timeVal, unitStr = GetValueAndUnitFromStr(timeStr)
         time = Time()
         time.time = timeVal
-        time.unit = Time.ParseTimeUnit(unitStr)
+        time.unit = Time.parseTimeUnit(unitStr)
         return time
 
     @staticmethod
-    def ParseTimeUnit(timeUnitStr):
+    def parseTimeUnit(timeUnitStr):
         if timeUnitStr is None:
             raise smException(errCodes.TIME_UNIT_PARSE_ERR, 'Could not parse time unit')
         timeStrToEnum = {'hour': TimeUnits.Hour,
@@ -107,7 +107,7 @@ class Speed:
         self.time = Time() if time is None else time
 
     def __repr__(self):
-        return json.dumps(self.Serialize())
+        return json.dumps(self.serialize())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -117,29 +117,29 @@ class Speed:
         else:
             return False
 
-    def Serialize(self):
+    def serialize(self):
         return {
-            EVENT_KEY: self.event.Serialize(),
-            TIME_KEY: self.time.Serialize()
+            EVENT_KEY: self.event.serialize(),
+            TIME_KEY: self.time.serialize()
         }
 
-    def Normalize(self):
+    def normalize(self):
         timeValue = self.time.time
         self.event.distance /= timeValue
         self.time.time /= timeValue
         return self
 
     @staticmethod
-    def ParseSpeedStr(speedStr):
-        eventStr, timeStr = Speed.GetEventAndTimeStr(speedStr)
+    def parseSpeedStr(speedStr):
+        eventStr, timeStr = Speed.getEventAndTimeStr(speedStr)
         speed = Speed()
-        speed.time = Time.ParseTimeStr(timeStr)
-        speed.event = Event.ParseEventStr(eventStr, speed.time.unit)
+        speed.time = Time.parseTimeStr(timeStr)
+        speed.event = Event.parseEventStr(eventStr, speed.time.unit)
         return speed
 
     @staticmethod
-    def GetEventAndTimeStr(speedStr):
-        dividerStr = Speed.GetEventTimeDivider(speedStr)
+    def getEventAndTimeStr(speedStr):
+        dividerStr = Speed.getEventTimeDivider(speedStr)
         reFormat = GetSpeedAndPaceReFormat(dividerStr)
         match = re.search(reFormat, speedStr)
         if match is None:
@@ -147,7 +147,7 @@ class Speed:
         return match.group(1) + match.group(2), match.group(3)
 
     @staticmethod
-    def GetEventTimeDivider(speedStr):
+    def getEventTimeDivider(speedStr):
         possibleDividers = [r'per', r'p', r'/']
         for divider in possibleDividers:
             reFormat = r'\s?' + divider + r'\s?'
@@ -163,7 +163,7 @@ class Pace:
         self.event = Event() if event is None else event
 
     def __repr__(self):
-        return json.dumps(self.Serialize())
+        return json.dumps(self.serialize())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -173,20 +173,20 @@ class Pace:
         else:
             return False
 
-    def Serialize(self):
+    def serialize(self):
         return {
-            TIME_KEY: self.time.Serialize(),
-            EVENT_KEY: self.event.Serialize()
+            TIME_KEY: self.time.serialize(),
+            EVENT_KEY: self.event.serialize()
         }
 
-    def Normalize(self):
+    def normalize(self):
         distanceValue = self.event.distance
         self.time.time /= distanceValue
         self.event.distance /= distanceValue
         return self
 
     @staticmethod
-    def GetTimeEventDivider(paceStr):
+    def getTimeEventDivider(paceStr):
         possibleDividers = [r'per', r'p', r'/']
         for divider in possibleDividers:
             reFormat = r'\s?' + divider + r'\s?'
@@ -196,8 +196,8 @@ class Pace:
         return ''
 
     @staticmethod
-    def GetTimeAndEventStr(paceStr):
-        dividerStr = Pace.GetTimeEventDivider(paceStr)
+    def getTimeAndEventStr(paceStr):
+        dividerStr = Pace.getTimeEventDivider(paceStr)
         reFormat = GetSpeedAndPaceReFormat(dividerStr)
         match = re.search(reFormat, paceStr)
         if match is None:
@@ -205,9 +205,9 @@ class Pace:
         return match.group(1) + match.group(2), match.group(3)
 
     @staticmethod
-    def ParsePaceStr(paceStr):
-        timeStr, eventStr = Pace.GetTimeAndEventStr(paceStr)
+    def parsePaceStr(paceStr):
+        timeStr, eventStr = Pace.getTimeAndEventStr(paceStr)
         pace = Pace()
-        pace.time = Time.ParseTimeStr(timeStr)
-        pace.event = Event.ParseEventStr(eventStr, pace.time.unit)
+        pace.time = Time.parseTimeStr(timeStr)
+        pace.event = Event.parseEventStr(eventStr, pace.time.unit)
         return pace
