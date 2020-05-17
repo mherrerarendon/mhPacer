@@ -1,5 +1,6 @@
 from speedmath.types import Speed, Pace, Event, Time
 from speedmath.common import DistanceUnits, TimeUnits, KM_PER_MILE, MILE_PER_KM, HOURS_PER_SECOND, SECONDS_PER_HOUR
+from speedmath.errCodes import smException, errCodes
 
 
 class Converter:
@@ -67,7 +68,7 @@ class Converter:
     @staticmethod
     def getPaceFromSpeed(speed):
         if speed.time.unit != TimeUnits.Hour:
-            raise Exception('Only time unit supported for speed->pace conversion is hours')
+            speed = Converter.toBaseSpeed(speed)
         pace = Pace()
         pace.time = Time(60 / speed.event.distance, TimeUnits.Minute)
         pace.event = Event(1, speed.event.unit)
@@ -76,7 +77,7 @@ class Converter:
     @staticmethod
     def getSpeedFromPace(pace):
         if pace.time.unit != TimeUnits.Minute:
-            raise Exception('Only time unit supported for pace->speed conversion is minutes')
+            raise smException(errCodes.VALUE_ERR, 'Only time unit supported for pace->speed conversion is minutes')
         speed = Speed()
         speed.event = Event(60 / pace.time.time, pace.event.unit)
         speed.time = Time(1, TimeUnits.Hour)

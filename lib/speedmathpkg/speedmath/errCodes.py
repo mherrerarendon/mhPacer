@@ -21,3 +21,4 @@ class errCodes(Enum):
     VALUE_PARSE_ERR = auto()
     DISTANCE_UNIT_PARSE_ERR = auto()
     TIME_UNIT_PARSE_ERR = auto()
+    VALUE_ERR = auto()

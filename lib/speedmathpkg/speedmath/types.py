@@ -1,7 +1,7 @@
-from speedmath.errCodes import smException, errCodes
 import json
 import re
 from speedmath.common import DistanceUnits, TimeUnits, DISTANCE_KEY, TIME_KEY, UNIT_KEY, EVENT_KEY, GetValueAndUnitFromStr, GetSpeedAndPaceReFormat
+from speedmath.errCodes import smException, errCodes
 
 
 class Event:
@@ -14,9 +14,8 @@ class Event:
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return (
-                self.distance == other.distance and
-                self.unit == other.unit)
+            return (self.distance == other.distance and
+                    self.unit == other.unit)
         else:
             return False
 
@@ -63,8 +62,7 @@ class Time:
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return (
-                    self.time == other.time and
+            return (self.time == other.time and
                     self.unit == other.unit)
         else:
             return False
@@ -111,9 +109,8 @@ class Speed:
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return (
-                self.event == other.event and
-                self.time == other.time)
+            return (self.event == other.event and
+                    self.time == other.time)
         else:
             return False
 
@@ -167,9 +164,8 @@ class Pace:
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return (
-                self.time == other.time and
-                self.event == other.event)
+            return (self.time == other.time and
+                    self.event == other.event)
         else:
             return False
 
