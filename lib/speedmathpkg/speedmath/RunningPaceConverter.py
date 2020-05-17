@@ -1,5 +1,5 @@
-from SpeedStrParser import *
-from Types import *
+from speedmath.SpeedStrParser import Speed, Pace, Event, Time
+from speedmath.Types import DistanceUnits, TimeUnits, KM_PER_MILE, MILE_PER_KM, HOURS_PER_SECOND, SECONDS_PER_HOUR
 
 
 class RunningPaceConverter:

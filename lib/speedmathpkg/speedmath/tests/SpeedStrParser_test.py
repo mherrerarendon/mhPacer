@@ -1,8 +1,8 @@
 import unittest
 
-from ErrorCodes import RPCException, ErrorCodes
-from SpeedStrParser import *
-from Types import *
+from speedmath.ErrorCodes import RPCException, ErrorCodes
+from speedmath.SpeedStrParser import Speed, Pace, Event, Time, GetValueAndUnitFromStr
+from speedmath.Types import DistanceUnits, TimeUnits
 
 
 class TestSpeedStrParser(unittest.TestCase):

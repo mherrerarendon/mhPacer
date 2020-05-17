@@ -1,7 +1,7 @@
-from ErrorCodes import RPCException, ErrorCodes
+from speedmath.ErrorCodes import RPCException, ErrorCodes
 import json
 import re
-from Types import *
+from speedmath.Types import DistanceUnits, TimeUnits, DISTANCE_KEY, TIME_KEY, UNIT_KEY, EVENT_KEY
 
 
 def GetSpeedAndPaceReFormat(dividerStr=''):

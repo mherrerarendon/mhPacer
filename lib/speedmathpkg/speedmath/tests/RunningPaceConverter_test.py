@@ -1,8 +1,8 @@
 import unittest
 
-from SpeedStrParser import *
-from RunningPaceConverter import RunningPaceConverter
-from Types import *
+from speedmath.SpeedStrParser import Speed, Event, Time, Pace
+from speedmath.RunningPaceConverter import RunningPaceConverter
+from speedmath.Types import DistanceUnits, TimeUnits
 
 
 class TestRunningPaceConverter(unittest.TestCase):
