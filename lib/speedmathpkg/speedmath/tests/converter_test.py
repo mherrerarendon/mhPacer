@@ -1,7 +1,7 @@
 import unittest
 
 from speedmath.types import Speed, Event, Time, Pace
-from speedmath.Converter import Converter
+from speedmath.converter import Converter
 from speedmath.common import DistanceUnits, TimeUnits
 
 
