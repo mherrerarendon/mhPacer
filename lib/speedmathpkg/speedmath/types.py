@@ -1,38 +1,7 @@
-from speedmath.ErrorCodes import RPCException, ErrorCodes
+from speedmath.errCodes import smException, errCodes
 import json
 import re
-from speedmath.Types import DistanceUnits, TimeUnits, DISTANCE_KEY, TIME_KEY, UNIT_KEY, EVENT_KEY
-
-
-def GetSpeedAndPaceReFormat(dividerStr=''):
-    return GetValueAndUnitReFormat(forceNumberValues=True) + r'\s?' + dividerStr + r'\s?' + GetValueAndUnitReFormat(forceNumberValues=False)
-
-
-def GetValueAndUnitReFormat(forceNumberValues=False, theStr=None):
-    if forceNumberValues or (theStr is not None and re.search(r'\d', theStr)):
-        return r'(\d+\.?\d*)\s?(\S+)'
-    else:
-        return r'(\S+)'
-
-
-def GetValueAndUnitFromStr(parseStr):
-    reFormat = GetValueAndUnitReFormat(forceNumberValues=False, theStr=parseStr)
-    match = re.search(reFormat, parseStr)
-    if match is None or len(match.groups()) > 2:
-        raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse event string')
-    elif len(match.groups()) == 1:
-        # The groups match is the units, and there is no number, which means 1
-        value = 1
-        unitStr = match.group(1)
-    elif len(match.groups()) == 2:
-        try:
-            value = int(match.group(1))
-        except ValueError:
-            value = float(match.group(1))
-        except Exception:
-            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse value')
-        unitStr = match.group(2)
-    return value, unitStr
+from speedmath.common import DistanceUnits, TimeUnits, DISTANCE_KEY, TIME_KEY, UNIT_KEY, EVENT_KEY, GetValueAndUnitFromStr, GetSpeedAndPaceReFormat
 
 
 class Event:
@@ -41,7 +10,7 @@ class Event:
         self.unit = unit
 
     def __repr__(self):
-        return json.dumps(self.Serialize())
+        return json.dumps(self.serialize())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -51,7 +20,7 @@ class Event:
         else:
             return False
 
-    def Serialize(self):
+    def serialize(self):
         serializeDistanceUnit = {DistanceUnits.Mile: 'mile',
                                  DistanceUnits.KM: 'kilometer',
                                  DistanceUnits.Meter: 'meter'}
@@ -61,17 +30,17 @@ class Event:
         }
 
     @staticmethod
-    def ParseEventStr(eventStr, timeUnit=None):
+    def parseEventStr(eventStr, timeUnit=None):
         distance, unitStr = GetValueAndUnitFromStr(eventStr)
         event = Event()
         event.distance = distance
-        event.unit = Event.ParseDistanceUnit(unitStr, timeUnit)
+        event.unit = Event.parseDistanceUnit(unitStr, timeUnit)
         return event
 
     @staticmethod
-    def ParseDistanceUnit(distanceUnitStr, timeUnit=None):
+    def parseDistanceUnit(distanceUnitStr, timeUnit=None):
         if distanceUnitStr is None:
-            raise RPCException(ErrorCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
+            raise smException(errCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
         distanceStrToEnum = {'mile': DistanceUnits.Mile,
                              'kilometer': DistanceUnits.KM,
                              'meter': DistanceUnits.Meter,
@@ -81,7 +50,7 @@ class Event:
         for unitStr, unit in distanceStrToEnum.items():
             if unitStr in distanceUnitStr.lower():
                 return unit
-        raise RPCException(ErrorCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
+        raise smException(errCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
 
 
 class Time:
@@ -90,7 +59,7 @@ class Time:
         self.unit = unit
 
     def __repr__(self):
-        return json.dumps(self.Serialize())
+        return json.dumps(self.serialize())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -100,7 +69,7 @@ class Time:
         else:
             return False
 
-    def Serialize(self):
+    def serialize(self):
         serializeTimeUnit = {TimeUnits.Hour: 'hour',
                              TimeUnits.Minute: 'minute',
                              TimeUnits.Second: 'second'}
@@ -109,17 +78,17 @@ class Time:
             UNIT_KEY: serializeTimeUnit[self.unit]
         }
 
-    def ParseTimeStr(timeStr):
+    def parseTimeStr(timeStr):
         timeVal, unitStr = GetValueAndUnitFromStr(timeStr)
         time = Time()
         time.time = timeVal
-        time.unit = Time.ParseTimeUnit(unitStr)
+        time.unit = Time.parseTimeUnit(unitStr)
         return time
 
     @staticmethod
-    def ParseTimeUnit(timeUnitStr):
+    def parseTimeUnit(timeUnitStr):
         if timeUnitStr is None:
-            raise RPCException(ErrorCodes.TIME_UNIT_PARSE_ERR, 'Could not parse time unit')
+            raise smException(errCodes.TIME_UNIT_PARSE_ERR, 'Could not parse time unit')
         timeStrToEnum = {'hour': TimeUnits.Hour,
                          'second': TimeUnits.Second,
                          'minute': TimeUnits.Minute,
@@ -129,7 +98,7 @@ class Time:
         for unitStr, unit in timeStrToEnum.items():
             if unitStr in timeUnitStr.lower():
                 return unit
-        raise RPCException(ErrorCodes.TIME_UNIT_PARSE_ERR, 'Could not parse time unit')
+        raise smException(errCodes.TIME_UNIT_PARSE_ERR, 'Could not parse time unit')
 
 
 class Speed:
@@ -138,7 +107,7 @@ class Speed:
         self.time = Time() if time is None else time
 
     def __repr__(self):
-        return json.dumps(self.Serialize())
+        return json.dumps(self.serialize())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -148,44 +117,44 @@ class Speed:
         else:
             return False
 
-    def Serialize(self):
+    def serialize(self):
         return {
-            EVENT_KEY: self.event.Serialize(),
-            TIME_KEY: self.time.Serialize()
+            EVENT_KEY: self.event.serialize(),
+            TIME_KEY: self.time.serialize()
         }
 
-    def Normalize(self):
+    def normalize(self):
         timeValue = self.time.time
         self.event.distance /= timeValue
         self.time.time /= timeValue
         return self
 
     @staticmethod
-    def ParseSpeedStr(speedStr):
-        eventStr, timeStr = Speed.GetEventAndTimeStr(speedStr)
+    def parseSpeedStr(speedStr):
+        eventStr, timeStr = Speed.getEventAndTimeStr(speedStr)
         speed = Speed()
-        speed.time = Time.ParseTimeStr(timeStr)
-        speed.event = Event.ParseEventStr(eventStr, speed.time.unit)
+        speed.time = Time.parseTimeStr(timeStr)
+        speed.event = Event.parseEventStr(eventStr, speed.time.unit)
         return speed
 
     @staticmethod
-    def GetEventAndTimeStr(speedStr):
-        dividerStr = Speed.GetEventTimeDivider(speedStr)
+    def getEventAndTimeStr(speedStr):
+        dividerStr = Speed.getEventTimeDivider(speedStr)
         reFormat = GetSpeedAndPaceReFormat(dividerStr)
         match = re.search(reFormat, speedStr)
         if match is None:
-            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')
+            raise smException(errCodes.PARSE_ERR, 'Could not parse speed string')
         return match.group(1) + match.group(2), match.group(3)
 
     @staticmethod
-    def GetEventTimeDivider(speedStr):
+    def getEventTimeDivider(speedStr):
         possibleDividers = [r'per', r'p', r'/']
         for divider in possibleDividers:
             reFormat = r'\s?' + divider + r'\s?'
             matchList = re.findall(reFormat, speedStr)
             if len(matchList) == 1:
                 return divider
-        raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')
+        raise smException(errCodes.PARSE_ERR, 'Could not parse speed string')
 
 
 class Pace:
@@ -194,7 +163,7 @@ class Pace:
         self.event = Event() if event is None else event
 
     def __repr__(self):
-        return json.dumps(self.Serialize())
+        return json.dumps(self.serialize())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -204,20 +173,20 @@ class Pace:
         else:
             return False
 
-    def Serialize(self):
+    def serialize(self):
         return {
-            TIME_KEY: self.time.Serialize(),
-            EVENT_KEY: self.event.Serialize()
+            TIME_KEY: self.time.serialize(),
+            EVENT_KEY: self.event.serialize()
         }
 
-    def Normalize(self):
+    def normalize(self):
         distanceValue = self.event.distance
         self.time.time /= distanceValue
         self.event.distance /= distanceValue
         return self
 
     @staticmethod
-    def GetTimeEventDivider(paceStr):
+    def getTimeEventDivider(paceStr):
         possibleDividers = [r'per', r'p', r'/']
         for divider in possibleDividers:
             reFormat = r'\s?' + divider + r'\s?'
@@ -227,18 +196,18 @@ class Pace:
         return ''
 
     @staticmethod
-    def GetTimeAndEventStr(paceStr):
-        dividerStr = Pace.GetTimeEventDivider(paceStr)
+    def getTimeAndEventStr(paceStr):
+        dividerStr = Pace.getTimeEventDivider(paceStr)
         reFormat = GetSpeedAndPaceReFormat(dividerStr)
         match = re.search(reFormat, paceStr)
         if match is None:
-            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse pace string')
+            raise smException(errCodes.PARSE_ERR, 'Could not parse pace string')
         return match.group(1) + match.group(2), match.group(3)
 
     @staticmethod
-    def ParsePaceStr(paceStr):
-        timeStr, eventStr = Pace.GetTimeAndEventStr(paceStr)
+    def parsePaceStr(paceStr):
+        timeStr, eventStr = Pace.getTimeAndEventStr(paceStr)
         pace = Pace()
-        pace.time = Time.ParseTimeStr(timeStr)
-        pace.event = Event.ParseEventStr(eventStr, pace.time.unit)
+        pace.time = Time.parseTimeStr(timeStr)
+        pace.event = Event.parseEventStr(eventStr, pace.time.unit)
         return pace

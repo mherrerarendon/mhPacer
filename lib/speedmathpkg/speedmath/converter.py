@@ -1,20 +1,20 @@
-from speedmath.SpeedStrParser import Speed, Pace, Event, Time
-from speedmath.Types import DistanceUnits, TimeUnits, KM_PER_MILE, MILE_PER_KM, HOURS_PER_SECOND, SECONDS_PER_HOUR
+from speedmath.types import Speed, Pace, Event, Time
+from speedmath.common import DistanceUnits, TimeUnits, KM_PER_MILE, MILE_PER_KM, HOURS_PER_SECOND, SECONDS_PER_HOUR
 
 
-class RunningPaceConverter:
+class Converter:
     def __init__(self, speed=None):
-        self.speed = Speed() if speed is None else self.ToBaseSpeed(speed)
+        self.speed = Speed() if speed is None else self.toBaseSpeed(speed)
 
     @staticmethod
-    def ToBaseSpeed(speed):
-        speed.event = RunningPaceConverter.ToBaseEvent(speed.event)
-        speed.time = RunningPaceConverter.ToBaseTime(speed.time)
-        speed.Normalize()
+    def toBaseSpeed(speed):
+        speed.event = Converter.toBaseEvent(speed.event)
+        speed.time = Converter.toBaseTime(speed.time)
+        speed.normalize()
         return speed
 
     @staticmethod
-    def ToBaseEvent(event):
+    def toBaseEvent(event):
         # Base distance unit is kilometer
         # Only convert to kilometer
         distanceTable = {
@@ -24,7 +24,7 @@ class RunningPaceConverter:
         }
         return Event(distanceTable[event.unit](event.distance), DistanceUnits.KM)
 
-    def GetEventWithUnit(self, distanceUnit):
+    def getEventWithUnit(self, distanceUnit):
         # Only convert from kilometer
         distanceTable = {
             DistanceUnits.KM: lambda kms: kms,
@@ -34,7 +34,7 @@ class RunningPaceConverter:
         return Event(distanceTable[distanceUnit](self.speed.event.distance), distanceUnit)
 
     @staticmethod
-    def ToBaseTime(time):
+    def toBaseTime(time):
         # Base time unit is hour
         # Only convert to hour
         timeTable = {
@@ -44,7 +44,7 @@ class RunningPaceConverter:
         }
         return Time(timeTable[time.unit](time.time), TimeUnits.Hour)
 
-    def GetTimeWithUnit(self, timeUnit):
+    def getTimeWithUnit(self, timeUnit):
         # Only convert from hour
         timeTable = {
             TimeUnits.Hour: lambda hours: hours,
@@ -53,19 +53,19 @@ class RunningPaceConverter:
         }
         return Time(timeTable[timeUnit](self.speed.time.time), timeUnit)
 
-    def GetSpeedInTargetUnits(self, targetDistanceUnit, targetTimeUnit):
-        eventInTargetUnits = self.GetEventWithUnit(targetDistanceUnit)
-        timeInTargetUnits = self.GetTimeWithUnit(targetTimeUnit)
-        return Speed(eventInTargetUnits, timeInTargetUnits).Normalize()
+    def getSpeedInTargetUnits(self, targetDistanceUnit, targetTimeUnit):
+        eventInTargetUnits = self.getEventWithUnit(targetDistanceUnit)
+        timeInTargetUnits = self.getTimeWithUnit(targetTimeUnit)
+        return Speed(eventInTargetUnits, timeInTargetUnits).normalize()
 
     @staticmethod
-    def GetEventTimeWithSpeed(speed, event, targetTimeUnit):
-        rpc = RunningPaceConverter(speed)
-        speedInTargetUnits = rpc.GetSpeedInTargetUnits(event.unit, targetTimeUnit)
+    def getEventTimeWithSpeed(speed, event, targetTimeUnit):
+        rpc = Converter(speed)
+        speedInTargetUnits = rpc.getSpeedInTargetUnits(event.unit, targetTimeUnit)
         return Time(event.distance / speedInTargetUnits.event.distance, targetTimeUnit)
 
     @staticmethod
-    def GetPaceFromSpeed(speed):
+    def getPaceFromSpeed(speed):
         if speed.time.unit != TimeUnits.Hour:
             raise Exception('Only time unit supported for speed->pace conversion is hours')
         pace = Pace()
@@ -74,7 +74,7 @@ class RunningPaceConverter:
         return pace
 
     @staticmethod
-    def GetSpeedFromPace(pace):
+    def getSpeedFromPace(pace):
         if pace.time.unit != TimeUnits.Minute:
             raise Exception('Only time unit supported for pace->speed conversion is minutes')
         speed = Speed()

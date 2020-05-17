@@ -8,8 +8,8 @@ sys.path.append(sourceDir)
 
 from ErrorCodes import RPCException
 from RunningPaceConverter import RunningPaceConverter
-from SpeedStrParser import *
-from Types import *
+from types import *
+from common import *
 
 app = Flask(__name__)
 
