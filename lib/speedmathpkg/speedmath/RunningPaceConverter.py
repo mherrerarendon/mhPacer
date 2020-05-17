@@ -1,15 +1,15 @@
-from speedmath.SpeedStrParser import Speed, Pace, Event, Time
-from speedmath.Types import DistanceUnits, TimeUnits, KM_PER_MILE, MILE_PER_KM, HOURS_PER_SECOND, SECONDS_PER_HOUR
+from speedmath.types import Speed, Pace, Event, Time
+from speedmath.common import DistanceUnits, TimeUnits, KM_PER_MILE, MILE_PER_KM, HOURS_PER_SECOND, SECONDS_PER_HOUR
 
 
-class RunningPaceConverter:
+class Converter:
     def __init__(self, speed=None):
         self.speed = Speed() if speed is None else self.ToBaseSpeed(speed)
 
     @staticmethod
     def ToBaseSpeed(speed):
-        speed.event = RunningPaceConverter.ToBaseEvent(speed.event)
-        speed.time = RunningPaceConverter.ToBaseTime(speed.time)
+        speed.event = Converter.ToBaseEvent(speed.event)
+        speed.time = Converter.ToBaseTime(speed.time)
         speed.Normalize()
         return speed
 
@@ -60,7 +60,7 @@ class RunningPaceConverter:
 
     @staticmethod
     def GetEventTimeWithSpeed(speed, event, targetTimeUnit):
-        rpc = RunningPaceConverter(speed)
+        rpc = Converter(speed)
         speedInTargetUnits = rpc.GetSpeedInTargetUnits(event.unit, targetTimeUnit)
         return Time(event.distance / speedInTargetUnits.event.distance, targetTimeUnit)
 

@@ -1,38 +1,7 @@
-from speedmath.ErrorCodes import RPCException, ErrorCodes
+from speedmath.errCodes import smException, errCodes
 import json
 import re
-from speedmath.Types import DistanceUnits, TimeUnits, DISTANCE_KEY, TIME_KEY, UNIT_KEY, EVENT_KEY
-
-
-def GetSpeedAndPaceReFormat(dividerStr=''):
-    return GetValueAndUnitReFormat(forceNumberValues=True) + r'\s?' + dividerStr + r'\s?' + GetValueAndUnitReFormat(forceNumberValues=False)
-
-
-def GetValueAndUnitReFormat(forceNumberValues=False, theStr=None):
-    if forceNumberValues or (theStr is not None and re.search(r'\d', theStr)):
-        return r'(\d+\.?\d*)\s?(\S+)'
-    else:
-        return r'(\S+)'
-
-
-def GetValueAndUnitFromStr(parseStr):
-    reFormat = GetValueAndUnitReFormat(forceNumberValues=False, theStr=parseStr)
-    match = re.search(reFormat, parseStr)
-    if match is None or len(match.groups()) > 2:
-        raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse event string')
-    elif len(match.groups()) == 1:
-        # The groups match is the units, and there is no number, which means 1
-        value = 1
-        unitStr = match.group(1)
-    elif len(match.groups()) == 2:
-        try:
-            value = int(match.group(1))
-        except ValueError:
-            value = float(match.group(1))
-        except Exception:
-            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse value')
-        unitStr = match.group(2)
-    return value, unitStr
+from speedmath.common import DistanceUnits, TimeUnits, DISTANCE_KEY, TIME_KEY, UNIT_KEY, EVENT_KEY, GetValueAndUnitFromStr, GetSpeedAndPaceReFormat
 
 
 class Event:
@@ -71,7 +40,7 @@ class Event:
     @staticmethod
     def ParseDistanceUnit(distanceUnitStr, timeUnit=None):
         if distanceUnitStr is None:
-            raise RPCException(ErrorCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
+            raise smException(errCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
         distanceStrToEnum = {'mile': DistanceUnits.Mile,
                              'kilometer': DistanceUnits.KM,
                              'meter': DistanceUnits.Meter,
@@ -81,7 +50,7 @@ class Event:
         for unitStr, unit in distanceStrToEnum.items():
             if unitStr in distanceUnitStr.lower():
                 return unit
-        raise RPCException(ErrorCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
+        raise smException(errCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
 
 
 class Time:
@@ -119,7 +88,7 @@ class Time:
     @staticmethod
     def ParseTimeUnit(timeUnitStr):
         if timeUnitStr is None:
-            raise RPCException(ErrorCodes.TIME_UNIT_PARSE_ERR, 'Could not parse time unit')
+            raise smException(errCodes.TIME_UNIT_PARSE_ERR, 'Could not parse time unit')
         timeStrToEnum = {'hour': TimeUnits.Hour,
                          'second': TimeUnits.Second,
                          'minute': TimeUnits.Minute,
@@ -129,7 +98,7 @@ class Time:
         for unitStr, unit in timeStrToEnum.items():
             if unitStr in timeUnitStr.lower():
                 return unit
-        raise RPCException(ErrorCodes.TIME_UNIT_PARSE_ERR, 'Could not parse time unit')
+        raise smException(errCodes.TIME_UNIT_PARSE_ERR, 'Could not parse time unit')
 
 
 class Speed:
@@ -174,7 +143,7 @@ class Speed:
         reFormat = GetSpeedAndPaceReFormat(dividerStr)
         match = re.search(reFormat, speedStr)
         if match is None:
-            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')
+            raise smException(errCodes.PARSE_ERR, 'Could not parse speed string')
         return match.group(1) + match.group(2), match.group(3)
 
     @staticmethod
@@ -185,7 +154,7 @@ class Speed:
             matchList = re.findall(reFormat, speedStr)
             if len(matchList) == 1:
                 return divider
-        raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse speed string')
+        raise smException(errCodes.PARSE_ERR, 'Could not parse speed string')
 
 
 class Pace:
@@ -232,7 +201,7 @@ class Pace:
         reFormat = GetSpeedAndPaceReFormat(dividerStr)
         match = re.search(reFormat, paceStr)
         if match is None:
-            raise RPCException(ErrorCodes.PARSE_ERR, 'Could not parse pace string')
+            raise smException(errCodes.PARSE_ERR, 'Could not parse pace string')
         return match.group(1) + match.group(2), match.group(3)
 
     @staticmethod

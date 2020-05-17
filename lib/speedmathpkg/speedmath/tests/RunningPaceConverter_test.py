@@ -1,23 +1,23 @@
 import unittest
 
-from speedmath.SpeedStrParser import Speed, Event, Time, Pace
-from speedmath.RunningPaceConverter import RunningPaceConverter
-from speedmath.Types import DistanceUnits, TimeUnits
+from speedmath.types import Speed, Event, Time, Pace
+from speedmath.Converter import Converter
+from speedmath.common import DistanceUnits, TimeUnits
 
 
 class TestRunningPaceConverter(unittest.TestCase):
     # Legacy
     def AssertEventConversion(self, event, expectedEvent):
-        rpc = RunningPaceConverter()
-        rpc.speed.event = RunningPaceConverter.ToBaseEvent(event)
+        rpc = Converter()
+        rpc.speed.event = Converter.ToBaseEvent(event)
         actualEvent = rpc.GetEventWithUnit(expectedEvent.unit)
         actualEvent.distance = round(actualEvent.distance, 2)
         self.assertEqual(actualEvent, expectedEvent)
 
     # Legacy
     def AssertTimeConversion(self, time, expectedTime):
-        rpc = RunningPaceConverter()
-        rpc.speed.time = RunningPaceConverter.ToBaseTime(time)
+        rpc = Converter()
+        rpc.speed.time = Converter.ToBaseTime(time)
         actualTime = rpc.GetTimeWithUnit(expectedTime.unit)
         actualTime.time = round(actualTime.time, 2)
         self.assertEqual(actualTime, expectedTime)
@@ -34,7 +34,7 @@ class TestRunningPaceConverter(unittest.TestCase):
         self.AssertTimeConversion(Time(7200, TimeUnits.Second), Time(2, TimeUnits.Hour))
 
     def AssertSpeedConversion(self, speed, expectedSpeed):
-        rpc = RunningPaceConverter(speed)
+        rpc = Converter(speed)
         actualSpeed = rpc.GetSpeedInTargetUnits(expectedSpeed.event.unit, expectedSpeed.time.unit)
         actualSpeed.event.distance = round(actualSpeed.event.distance, 2)
         actualSpeed.time.time = round(actualSpeed.time.time, 2)
@@ -60,11 +60,11 @@ class TestRunningPaceConverter(unittest.TestCase):
     def test_GetEventTimeWithSpeed(self):
         speed = Speed(Event(1, DistanceUnits.KM), Time(1, TimeUnits.Hour))
         event = Event(1, DistanceUnits.Mile)
-        actualTime = RunningPaceConverter.GetEventTimeWithSpeed(speed, event, TimeUnits.Hour)
+        actualTime = Converter.GetEventTimeWithSpeed(speed, event, TimeUnits.Hour)
         self.assertEqual(round(actualTime.time, 2), 1.61)
 
     def AssertSpeedToPaceConversion(self, speed, expectedPace):
-        actualPace = RunningPaceConverter.GetPaceFromSpeed(speed)
+        actualPace = Converter.GetPaceFromSpeed(speed)
         actualPace.time.time = round(actualPace.time.time, 2)
         self.assertEqual(actualPace, expectedPace)
 
@@ -82,7 +82,7 @@ class TestRunningPaceConverter(unittest.TestCase):
         self.AssertSpeedToPaceConversion(speed, expectedPace)
 
     def AssertPaceToSpeedConversion(self, pace, expectedSpeed):
-        actualSpeed = RunningPaceConverter.GetSpeedFromPace(pace)
+        actualSpeed = Converter.GetSpeedFromPace(pace)
         actualSpeed.event.distance = round(actualSpeed.event.distance, 2)
         self.assertEqual(actualSpeed, expectedSpeed)
 

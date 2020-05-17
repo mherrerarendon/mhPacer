@@ -1,20 +1,20 @@
 import unittest
 
-from speedmath.ErrorCodes import RPCException, ErrorCodes
-from speedmath.SpeedStrParser import Speed, Pace, Event, Time, GetValueAndUnitFromStr
-from speedmath.Types import DistanceUnits, TimeUnits
+from speedmath.errCodes import smException, errCodes
+from speedmath.types import Speed, Pace, Event, Time, GetValueAndUnitFromStr
+from speedmath.common import DistanceUnits, TimeUnits
 
 
 class TestSpeedStrParser(unittest.TestCase):
     def AssertFuncRaisesException(self, func, exception):
-        with self.assertRaises(RPCException) as e:
+        with self.assertRaises(smException) as e:
             func()
         self.assertEqual(e.exception.error_code, exception)
 
     def test_Event_ParseDistanceUnit(self):
-        self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit(None), ErrorCodes.DISTANCE_UNIT_PARSE_ERR)
-        self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit(''), ErrorCodes.DISTANCE_UNIT_PARSE_ERR)
-        self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit('1'), ErrorCodes.DISTANCE_UNIT_PARSE_ERR)
+        self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit(None), errCodes.DISTANCE_UNIT_PARSE_ERR)
+        self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit(''), errCodes.DISTANCE_UNIT_PARSE_ERR)
+        self.AssertFuncRaisesException(lambda: Event.ParseDistanceUnit('1'), errCodes.DISTANCE_UNIT_PARSE_ERR)
 
         self.assertEqual(Event.ParseDistanceUnit('kilometer'), DistanceUnits.KM)
         self.assertEqual(Event.ParseDistanceUnit('kilometers'), DistanceUnits.KM)
@@ -31,9 +31,9 @@ class TestSpeedStrParser(unittest.TestCase):
         self.assertEqual(Event.ParseDistanceUnit('k'), DistanceUnits.KM)
 
     def test_ParseTimeUnit(self):
-        self.AssertFuncRaisesException(lambda: Time.ParseTimeUnit(None), ErrorCodes.TIME_UNIT_PARSE_ERR)
-        self.AssertFuncRaisesException(lambda: Time.ParseTimeUnit(''), ErrorCodes.TIME_UNIT_PARSE_ERR)
-        self.AssertFuncRaisesException(lambda: Time.ParseTimeUnit('t'), ErrorCodes.TIME_UNIT_PARSE_ERR)
+        self.AssertFuncRaisesException(lambda: Time.ParseTimeUnit(None), errCodes.TIME_UNIT_PARSE_ERR)
+        self.AssertFuncRaisesException(lambda: Time.ParseTimeUnit(''), errCodes.TIME_UNIT_PARSE_ERR)
+        self.AssertFuncRaisesException(lambda: Time.ParseTimeUnit('t'), errCodes.TIME_UNIT_PARSE_ERR)
 
         self.assertEqual(Time.ParseTimeUnit('hour'), TimeUnits.Hour)
         self.assertEqual(Time.ParseTimeUnit('hours'), TimeUnits.Hour)
@@ -74,9 +74,9 @@ class TestSpeedStrParser(unittest.TestCase):
         self.assertEqual(Event.ParseEventStr('10k'), Event(10, DistanceUnits.KM))
 
     def test_GetEventTimeDivider(self):
-        self.AssertFuncRaisesException(lambda: Speed.GetEventTimeDivider('per per'), ErrorCodes.PARSE_ERR)
-        self.AssertFuncRaisesException(lambda: Speed.GetEventTimeDivider('p p'), ErrorCodes.PARSE_ERR)
-        self.AssertFuncRaisesException(lambda: Speed.GetEventTimeDivider('/ /'), ErrorCodes.PARSE_ERR)
+        self.AssertFuncRaisesException(lambda: Speed.GetEventTimeDivider('per per'), errCodes.PARSE_ERR)
+        self.AssertFuncRaisesException(lambda: Speed.GetEventTimeDivider('p p'), errCodes.PARSE_ERR)
+        self.AssertFuncRaisesException(lambda: Speed.GetEventTimeDivider('/ /'), errCodes.PARSE_ERR)
 
         self.assertEqual(Speed.GetEventTimeDivider('per'), 'per')
         self.assertEqual(Speed.GetEventTimeDivider('p'), 'p')
