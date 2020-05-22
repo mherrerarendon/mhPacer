@@ -1,3 +1,4 @@
 *.pyc
 venv/*
-lib/speedmathpkg/speedmath.egg-info/*
+api/lib/speedmathpkg/speedmath.egg-info/*
+api/venv/*
