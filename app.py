@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import api.api as api
+import argparse
 
 app = Flask(__name__)
 
@@ -40,4 +41,10 @@ def getEventTimeWithSpeed():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    cli = argparse.ArgumentParser(
+        description='Runs server for RunningPaceConverter.',
+        epilog='Copyright 2020, Marco Herrera-Rendon. All Rights Reserved.')
+    cli.add_argument('-d', '--debug', action="store_true", help='Runs server in debug mode')
+    args = cli.parse_args()
+
+    app.run(debug=args.debug)
