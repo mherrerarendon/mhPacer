@@ -8,5 +8,6 @@
         "-v",
         "-p",
         "*_test.py"
-    ]
+    ],
+    "python.linting.pylintArgs": ["--generate-members"]
 }

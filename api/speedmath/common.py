@@ -1,6 +1,6 @@
 from enum import Enum, unique, auto
 import re
-from speedmath.errCodes import smException, errCodes
+from .errCodes import smException, errCodes
 
 
 @unique

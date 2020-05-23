@@ -1,7 +1,7 @@
 import json
 import re
-from speedmath.common import DistanceUnits, TimeUnits, DISTANCE_KEY, TIME_KEY, UNIT_KEY, EVENT_KEY, GetValueAndUnitFromStr, GetSpeedAndPaceReFormat
-from speedmath.errCodes import smException, errCodes
+from .common import DistanceUnits, TimeUnits, DISTANCE_KEY, TIME_KEY, UNIT_KEY, EVENT_KEY, GetValueAndUnitFromStr, GetSpeedAndPaceReFormat
+from .errCodes import smException, errCodes
 
 
 class Event:

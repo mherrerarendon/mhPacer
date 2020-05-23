@@ -1,6 +1,6 @@
-from speedmath.types import Speed, Pace, Event, Time
-from speedmath.common import DistanceUnits, TimeUnits, KM_PER_MILE, MILE_PER_KM, HOURS_PER_SECOND, SECONDS_PER_HOUR
-from speedmath.errCodes import smException, errCodes
+from .types import Speed, Pace, Event, Time
+from .common import DistanceUnits, TimeUnits, KM_PER_MILE, MILE_PER_KM, HOURS_PER_SECOND, SECONDS_PER_HOUR
+from .errCodes import smException, errCodes
 
 
 class Converter:

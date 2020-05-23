@@ -1,3 +1,2 @@
 colorama
 flask
--e api/lib/speedmathpkg
