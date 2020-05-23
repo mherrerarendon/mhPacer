@@ -1,14 +1,11 @@
 {
-    "python.testing.pytestArgs": [
-        "api/lib/speedmathpkg"
-    ],
     "python.testing.unittestEnabled": true,
     "python.testing.nosetestsEnabled": false,
     "python.testing.pytestEnabled": false,
     "python.testing.unittestArgs": [
-        "-v",
         "-s",
-        "./api",
+        "./api/",
+        "-v",
         "-p",
         "*_test.py"
     ]
