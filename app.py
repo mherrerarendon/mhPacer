@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-import api.api as api
+import api
 import argparse
 
 app = Flask(__name__)
