@@ -1,7 +1,7 @@
-from speedmath.types import Speed, Pace, Event
-from speedmath.converter import Converter
-from speedmath.errCodes import smException
-from speedmath.common import TimeUnits
+from source.speedmath.types import Speed, Pace, Event
+from source.speedmath.converter import Converter
+from source.speedmath.errCodes import smException
+from source.speedmath.common import TimeUnits
 
 
 def parseSpeedStr(speedStr):
