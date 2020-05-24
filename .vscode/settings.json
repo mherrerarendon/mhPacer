@@ -4,10 +4,13 @@
     "python.testing.pytestEnabled": false,
     "python.testing.unittestArgs": [
         "-s",
-        "./api/",
+        "./api",
         "-v",
         "-p",
         "*_test.py"
     ],
-    "python.linting.pylintArgs": ["--generate-members"]
+    "python.linting.pylintArgs": [
+        "--generate-members"
+    ],
+    "python.pythonPath": "venv\\Scripts\\python.exe"
 }

@@ -1,8 +1,8 @@
 import unittest
 
-from speedmath.errCodes import smException, errCodes
-from speedmath.types import Speed, Pace, Event, Time, GetValueAndUnitFromStr
-from speedmath.common import DistanceUnits, TimeUnits
+from ..errCodes import smException, errCodes
+from ..types import Speed, Pace, Event, Time, GetValueAndUnitFromStr
+from ..common import DistanceUnits, TimeUnits
 
 
 class TestSpeedStrParser(unittest.TestCase):
