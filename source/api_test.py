@@ -1,7 +1,5 @@
-# In order to run this tests, run this file directly. No pytest
+from source import api
 import unittest
-
-import api
 
 
 class TestApp(unittest.TestCase):
