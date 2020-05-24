@@ -59,7 +59,7 @@ class TestApi(unittest.TestCase):
         self.assertEqual(2, actualResponse['exitcode'])
 
         actualResponse = api.getEventTimeWithSpeed('10kph', '400m')
-        self.assertEqual(2, actualResponse['exitcode'])
+        self.assertEqual(0, actualResponse['exitcode'])
 
         
 if __name__ == '__main__':
