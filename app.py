@@ -10,7 +10,6 @@ def index():
     return render_template('index.html')
 
 
-# http://127.0.0.1:5000//api/v1.0/parseSpeedStr?speedStr=10kph
 @app.route('/api/v1.0/parseSpeedStr', methods=['GET'])
 def parseSpeedStr():
     speedStr = request.args.get('speedStr')

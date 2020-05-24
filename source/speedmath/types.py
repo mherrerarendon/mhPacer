@@ -40,6 +40,7 @@ class Event:
     def parseDistanceUnit(distanceUnitStr, timeUnit=None):
         if distanceUnitStr is None:
             raise smException(errCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
+        distanceUnitStr = distanceUnitStr.lower()
         distanceStrToEnum = {'mile': DistanceUnits.Mile,
                              'kilometer': DistanceUnits.KM,
                              'meter': DistanceUnits.Meter,
@@ -47,7 +48,7 @@ class Event:
                              'k': DistanceUnits.KM,
                              'm': DistanceUnits.Meter if timeUnit == TimeUnits.Second or timeUnit is None else DistanceUnits.Mile}
         for unitStr, unit in distanceStrToEnum.items():
-            if unitStr in distanceUnitStr.lower():
+            if distanceUnitStr.lower().startswith(unitStr):
                 return unit
         raise smException(errCodes.DISTANCE_UNIT_PARSE_ERR, 'Could not parse distance unit')
 
