@@ -5,7 +5,7 @@
   "containerDefinitions": [
       {
           "name": "rpc-app", 
-          "image": "177660332892.dkr.ecr.us-west-2.amazonaws.com/rpc-repository:latest", 
+          "image": "177660332892.dkr.ecr.us-west-2.amazonaws.com/rpc-repository:latestt", 
           "portMappings": [
               {
                   "containerPort": 80, 
