@@ -1,27 +1,24 @@
 {
-  "family": "rpc-task-definition",
+  "family": "rpc-task-definition", 
   "executionRoleArn": "arn:aws:iam::177660332892:role/ecsTaskExecutionRole",
-  "networkMode": "awsvpc",
+  "networkMode": "awsvpc", 
   "containerDefinitions": [
       {
-          "name": "rpc-app",
-          "image": "177660332892.dkr.ecr.us-west-2.amazonaws.com/rpc-repository:latest",
-          "repositoryCredentials": {
-              "credentialsParameter": ""
-          },
-          "cpu": 0,
-          "memoryReservation": 512,
-          "links": [
-              ""
-          ],
+          "name": "rpc-app", 
+          "image": "177660332892.dkr.ecr.us-west-2.amazonaws.com/rpc-repository:latest", 
           "portMappings": [
               {
-                "hostPort": 80,
-                "protocol": "tcp",
-                "containerPort": 80
+                  "containerPort": 80, 
+                  "hostPort": 80, 
+                  "protocol": "tcp"
               }
-          ],
+          ], 
           "essential": true
       }
-  ]
+  ], 
+  "requiresCompatibilities": [
+      "FARGATE"
+  ], 
+  "cpu": "256", 
+  "memory": "512"
 }
