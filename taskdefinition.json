@@ -6,6 +6,13 @@
       {
           "name": "rpc-app", 
           "image": "177660332892.dkr.ecr.us-west-2.amazonaws.com/rpc-repository:latest", 
+          "portMappings": [
+            {
+                "containerPort": 80, 
+                "hostPort": 80, 
+                "protocol": "tcp"
+            }
+          ],
           "memory": 200,
           "cpu": 10,
           "essential": true
