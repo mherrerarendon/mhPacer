@@ -46,4 +46,4 @@ if __name__ == '__main__':
     cli.add_argument('-d', '--debug', action="store_true", help='Runs server in debug mode')
     args = cli.parse_args()
 
-    app.run(debug=args.debug, port=80)
+    app.run(debug=args.debug, port=80, host='0.0.0.0')
