@@ -16,6 +16,7 @@
             "type": "python",
             "request": "launch",
             "program": "app.py",
+            "args": ["-d"],
             "console": "integratedTerminal"
         }
     ]
