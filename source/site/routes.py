@@ -1,25 +1,10 @@
-from flask import Flask, render_template, request, jsonify
-# from flask_restful import Resource, Api
-from source import api as rpcapi
-import argparse
-
-app = Flask(__name__)
-# restServer = Api(app)
-
+from flask import render_template, request, jsonify
+from source.site.rest_api_impl import *
+from source.site import app
 
 @app.route('/')
 def index():
     return render_template('index.html')
-
-
-# class Rpc(Resource):
-#     def get(self):
-#         speedStr = request.args.get('speedStr')
-#         response = rpcapi.parseSpeedStr(speedStr)
-#         return jsonify(response)
-
-
-# restServer.add_resource(Rpc, '/api/v1.0/parseSpeedStr')
 
 @app.route('/api/v1.0/parseSpeedStr', methods=['GET'])
 def parseSpeedStr():
@@ -48,14 +33,3 @@ def getEventTimeWithSpeed():
     eventStr = request.args.get('eventStr')
     response = rpcapi.getEventTimeWithSpeed(speedStr, eventStr)
     return jsonify(response)
-
-
-if __name__ == '__main__':
-    cli = argparse.ArgumentParser(
-        description='Runs server for RunningPaceConverter.',
-        epilog='Copyright 2020, Marco Herrera-Rendon. All Rights Reserved.')
-    cli.add_argument('-d', '--debug', action="store_true", help='Runs server in debug mode')
-    args = cli.parse_args()
-
-    # app.run(debug=args.debug, port=80, host='0.0.0.0')
-    app.run(debug=args.debug)
