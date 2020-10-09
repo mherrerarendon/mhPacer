@@ -1,6 +1,7 @@
 from flask import render_template, request, jsonify
 from source.site.rest_api_impl import *
 from source.site import app
+import source.site.rest_api_impl as rpcapi
 
 @app.route('/')
 def index():
