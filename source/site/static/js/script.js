@@ -58,9 +58,10 @@ function startTargetEventInputKeyDownTimer() {
 function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
     const queryData = {speedStr: iSpeedStr, eventStr: iEventStr};
     queryAPINameWithData("getEventTimeWithSpeed", queryData)
-        .then((data) => {
-            if (data.exitcode === 0) {
-                $("#divResult").text("Event time: " + getStrFromTimeObj(data.data));
+        .then((responseBody) => {
+            if (responseBody.time) {
+                console.log(responseBody.time)
+                $("#divResult").text("Event time: " + getStrFromTimeObj(responseBody.time));
             } else {
                 $("#divResult").text("");
             }
@@ -122,9 +123,9 @@ function clearSpeedPaceStrings() {
 function doAttemptParseSpeedPaceStr(iSpeedPaceStr) {
     const [apiName, queryData] = getApiNameAndQueryDataForSpeedPace(iSpeedPaceStr);
     queryAPINameWithData(apiName, queryData)
-        .then((data) => {
-            if (data.exitcode === 0) {
-                updateSpeedPaceStringsWithData(data.data);
+        .then((responseBody) => {
+            if (responseBody.completeRequest) {
+                updateSpeedPaceStringsWithData(responseBody);
             } else {
                 clearSpeedPaceStrings();
             }
@@ -137,9 +138,9 @@ function doAttemptParseSpeedPaceStr(iSpeedPaceStr) {
 function doAttemptParseTargetEventStr(targetEventStr) {
     const queryData = {eventStr: targetEventStr};
     queryAPINameWithData("parseEventStr", queryData)
-        .then((data) => {
-            if (data.exitcode === 0) {
-                $("#divParsedTargetEvent").text(getStrFromEventObj(data.data));
+        .then((responseBody) => {
+            if (responseBody.completeRequest) {
+                $("#divParsedTargetEvent").text(getStrFromEventObj(responseBody.event));
             } else {
                 $("#divParsedTargetEvent").text("");
             }

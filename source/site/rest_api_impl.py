@@ -9,13 +9,12 @@ def parseSpeedStr(speedStr):
     try:
         speed = Speed.parseSpeedStr(speedStr)
         pace = Converter.getPaceFromSpeed(speed)
-        response['data'] = {}
-        response['data']['speed'] = speed.serialize()
-        response['data']['pace'] = pace.serialize()
-        response['exitcode'] = 0
+        response['speed'] = speed.asdict()
+        response['pace'] = pace.asdict()
+        response['completeRequest'] = True
     except smException as e:
-        response['exitcode'] = e.error_code.value
-        response['data'] = repr(e)
+        response['completeRequest'] = False
+        response['reason'] = repr(e)
     return response
 
 
@@ -24,38 +23,32 @@ def parsePaceStr(paceStr):
     try:
         pace = Pace.parsePaceStr(paceStr)
         speed = Converter.getSpeedFromPace(pace)
-        response['data'] = {}
-        response['data']['pace'] = pace.serialize()
-        response['data']['speed'] = speed.serialize()
-        response['exitcode'] = 0
+        response['pace'] = pace.asdict()
+        response['speed'] = speed.asdict()
+        response['completeRequest'] = True
     except smException as e:
-        response['exitcode'] = e.error_code.value
-        response['data'] = repr(e)
+        response['completeRequest'] = False
+        response['reason'] = repr(e)
     return response
 
 
 def parseTargetEventStr(targetEventStr):
     response = {}
     try:
-        response['data'] = Event.parseEventStr(targetEventStr).serialize()
-        response['exitcode'] = 0
+        response['event'] = Event.parseEventStr(targetEventStr).asdict()
+        response['completeRequest'] = True
     except smException as e:
-        response['exitcode'] = e.error_code.value
-        response['data'] = repr(e)
+        response['completeRequest'] = False
+        response['reason'] = repr(e)
     return response
 
 
 def getEventTimeWithSpeed(speedStr, eventStr):
     response = {}
-    try:
-        speed = Speed.parseSpeedStr(speedStr)
-        targetEvent = Event.parseEventStr(eventStr)
+    speed = Speed.parseSpeedStr(speedStr)
+    targetEvent = Event.parseEventStr(eventStr)
 
-        # Assume client wants response in minutes
-        time = Converter.getEventTimeWithSpeed(speed, targetEvent, TimeUnits.Minute)
-        response['data'] = time.serialize()
-        response['exitcode'] = 0
-    except smException as e:
-        response['exitcode'] = e.error_code.value
-        response['data'] = repr(e)
+    # Assume client wants response in minutes
+    time = Converter.getEventTimeWithSpeed(speed, targetEvent, TimeUnits.Minute)
+    response['time'] = time.asdict()
     return response

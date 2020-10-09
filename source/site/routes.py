@@ -7,30 +7,34 @@ import source.site.rest_api_impl as rpcapi
 def index():
     return render_template('index.html')
 
-@app.route('/api/v1.0/parseSpeedStr', methods=['GET'])
+@app.route('/api/v1.0/parseSpeedStr', methods=['POST'])
 def parseSpeedStr():
-    speedStr = request.args.get('speedStr')
+    reqData = request.get_json()
+    speedStr = reqData['speedStr']
     response = rpcapi.parseSpeedStr(speedStr)
-    return jsonify(response)
+    return jsonify(response), 201
 
 
-@app.route('/api/v1.0/parsePaceStr', methods=['GET'])
+@app.route('/api/v1.0/parsePaceStr', methods=['POST'])
 def parsePaceStr():
-    paceStr = request.args.get('paceStr')
+    reqData = request.get_json()
+    paceStr = reqData['paceStr']
     response = rpcapi.parsePaceStr(paceStr)
-    return jsonify(response)
+    return jsonify(response), 201
 
 
-@app.route('/api/v1.0/parseEventStr', methods=['GET'])
+@app.route('/api/v1.0/parseEventStr', methods=['POST'])
 def parseTargetEventStr():
-    targetEventStr = request.args.get('eventStr')
+    reqData = request.get_json()
+    targetEventStr = reqData['eventStr']
     response = rpcapi.parseTargetEventStr(targetEventStr)
-    return jsonify(response)
+    return jsonify(response), 201
 
 
-@app.route('/api/v1.0/getEventTimeWithSpeed', methods=['GET'])
+@app.route('/api/v1.0/getEventTimeWithSpeed', methods=['POST'])
 def getEventTimeWithSpeed():
-    speedStr = request.args.get('speedStr')
-    eventStr = request.args.get('eventStr')
+    reqData = request.get_json()
+    speedStr = reqData['speedStr']
+    eventStr = reqData['eventStr']
     response = rpcapi.getEventTimeWithSpeed(speedStr, eventStr)
-    return jsonify(response)
+    return jsonify(response), 201
