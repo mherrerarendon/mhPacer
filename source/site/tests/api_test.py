@@ -1,63 +1,61 @@
+import pytest
 import source.site.rest_api_impl as api
-
-def test_thatTestRuns():
-    mynum = 1
-    assert 1 == mynum
+from source.speedmath.errCodes import errCodes, smException
 
 def test_parseSpeedStr():
-    actualResponse = api.parseSpeedStr('')
-    assert 2 == actualResponse['exitcode']
+    response = api.parseSpeedStr('')
+    assert not response['completeRequest']
 
-    actualResponse = api.parseSpeedStr('dummy')
-    assert 2 == actualResponse['exitcode']
+    response = api.parseSpeedStr('dummy')
+    assert not response['completeRequest']
 
-    actualResponse = api.parseSpeedStr('10')
-    assert 2 == actualResponse['exitcode']
+    response = api.parseSpeedStr('10')
+    assert not response['completeRequest']
 
-    actualResponse = api.parseSpeedStr('10k')
-    assert 2 == actualResponse['exitcode']
+    response = api.parseSpeedStr('10k')
+    assert not response['completeRequest']
 
-    actualResponse = api.parseSpeedStr('10kph')
-    assert 0 == actualResponse['exitcode']
+    response = api.parseSpeedStr('10kph')
+    assert response['completeRequest']
 
 def test_parsePaceStr():
-    actualResponse = api.parsePaceStr('')
-    assert 2 == actualResponse['exitcode']
+    response = api.parsePaceStr('')
+    assert not response['completeRequest']
 
-    actualResponse = api.parsePaceStr('dummy')
-    assert 2 == actualResponse['exitcode']
+    response = api.parsePaceStr('dummy')
+    assert not response['completeRequest']
 
-    actualResponse = api.parsePaceStr('10')
-    assert 2 == actualResponse['exitcode']
+    response = api.parsePaceStr('10')
+    assert not response['completeRequest']
 
-    actualResponse = api.parsePaceStr('10m')
-    assert 5 == actualResponse['exitcode']
+    response = api.parsePaceStr('10m')
+    assert not response['completeRequest']
 
-    actualResponse = api.parsePaceStr('10 min mile')
-    assert 0 == actualResponse['exitcode']
+    response = api.parsePaceStr('10 min mile')
+    assert response['completeRequest']
 
 def test_parseTargetEventStr():
-    actualResponse = api.parseTargetEventStr('')
-    assert 2 == actualResponse['exitcode']
+    response = api.parseTargetEventStr('')
+    assert not response['completeRequest']
 
-    actualResponse = api.parseTargetEventStr('dummy')
-    assert 4 == actualResponse['exitcode']
+    response = api.parseTargetEventStr('dummy')
+    assert not response['completeRequest']
 
-    actualResponse = api.parseTargetEventStr('10')
-    assert 4 == actualResponse['exitcode']
+    response = api.parseTargetEventStr('10')
+    assert not response['completeRequest']
 
-    actualResponse = api.parseTargetEventStr('10m')
-    assert 0 == actualResponse['exitcode']
+    response = api.parseTargetEventStr('10m')
+    assert response['completeRequest']
+
+def assertFuncRaisesException(func, theErrorCode):
+    with pytest.raises(smException) as e:
+        func()
+    assert e.value.error_code == theErrorCode
 
 def test_getEventTimeWithSpeed():
-    actualResponse = api.getEventTimeWithSpeed('', '')
-    assert 2 == actualResponse['exitcode']
+    assertFuncRaisesException(lambda: api.getEventTimeWithSpeed('', ''), errCodes.PARSE_ERR)
+    assertFuncRaisesException(lambda: api.getEventTimeWithSpeed('speedDummyStr', 'eventDummyStr'), errCodes.PARSE_ERR)
+    assertFuncRaisesException(lambda: api.getEventTimeWithSpeed('10', 'm'), errCodes.PARSE_ERR)
 
-    actualResponse = api.getEventTimeWithSpeed('speedDummyStr', 'eventDummyStr')
-    assert 2 == actualResponse['exitcode']
-
-    actualResponse = api.getEventTimeWithSpeed('10', 'm')
-    assert 2 == actualResponse['exitcode']
-
-    actualResponse = api.getEventTimeWithSpeed('10kph', '400m')
-    assert 0 == actualResponse['exitcode']
+    response = api.getEventTimeWithSpeed('10kph', '400m')
+    assert 'time' in response
