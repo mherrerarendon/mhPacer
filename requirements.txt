@@ -2,3 +2,4 @@ colorama
 flask
 flask_restful
 pylint
+pyopenssl

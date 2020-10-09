@@ -10,7 +10,7 @@ class Event:
         self.unit = unit
 
     def __repr__(self):
-        return json.dumps(self.serialize())
+        return json.dumps(self.asdict())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -19,7 +19,7 @@ class Event:
         else:
             return False
 
-    def serialize(self):
+    def asdict(self):
         serializeDistanceUnit = {DistanceUnits.Mile: 'mile',
                                  DistanceUnits.KM: 'kilometer',
                                  DistanceUnits.Meter: 'meter'}
@@ -59,7 +59,7 @@ class Time:
         self.unit = unit
 
     def __repr__(self):
-        return json.dumps(self.serialize())
+        return json.dumps(self.asdict())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -68,7 +68,7 @@ class Time:
         else:
             return False
 
-    def serialize(self):
+    def asdict(self):
         serializeTimeUnit = {TimeUnits.Hour: 'hour',
                              TimeUnits.Minute: 'minute',
                              TimeUnits.Second: 'second'}
@@ -106,7 +106,7 @@ class Speed:
         self.time = Time() if time is None else time
 
     def __repr__(self):
-        return json.dumps(self.serialize())
+        return json.dumps(self.asdict())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -115,10 +115,10 @@ class Speed:
         else:
             return False
 
-    def serialize(self):
+    def asdict(self):
         return {
-            EVENT_KEY: self.event.serialize(),
-            TIME_KEY: self.time.serialize()
+            EVENT_KEY: self.event.asdict(),
+            TIME_KEY: self.time.asdict()
         }
 
     def normalize(self):
@@ -161,7 +161,7 @@ class Pace:
         self.event = Event() if event is None else event
 
     def __repr__(self):
-        return json.dumps(self.serialize())
+        return json.dumps(self.asdict())
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -170,10 +170,10 @@ class Pace:
         else:
             return False
 
-    def serialize(self):
+    def asdict(self):
         return {
-            TIME_KEY: self.time.serialize(),
-            EVENT_KEY: self.event.serialize()
+            TIME_KEY: self.time.asdict(),
+            EVENT_KEY: self.event.asdict()
         }
 
     def normalize(self):
