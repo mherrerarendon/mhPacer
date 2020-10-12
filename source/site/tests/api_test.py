@@ -1,5 +1,5 @@
 import pytest
-import source.site.rest_api_impl as api
+import source.site.restApiImpl as api
 from source.speedmath.errCodes import errCodes, smException
 
 def test_parseSpeedStr():

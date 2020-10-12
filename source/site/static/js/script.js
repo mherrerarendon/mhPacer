@@ -57,7 +57,7 @@ function startTargetEventInputKeyDownTimer() {
 
 function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
     const queryData = {speedStr: iSpeedStr, eventStr: iEventStr};
-    queryAPINameWithData("getEventTimeWithSpeed", queryData)
+    queryAPINameWithData("speedmath/getEventTimeWithSpeed", queryData)
         .then((responseBody) => {
             if (responseBody.time) {
                 $("#divResult").text("Event time: " + getStrFromTimeObj(responseBody.time));
@@ -72,11 +72,11 @@ function getApiNameAndQueryDataForSpeedPace(iSpeedPaceStr) {
     var queryData = null;
     switch($("#selectSpeedPace").val()) {
         case 'selectSpeed':
-            apiName = "parseSpeedStr";
+            apiName = "parser/parseSpeedStr";
             queryData = {speedStr: iSpeedPaceStr};
             break;
         case 'selectPace':
-            apiName = "parsePaceStr";
+            apiName = "parser/parsePaceStr";
             queryData = {paceStr: iSpeedPaceStr};
             break;
         }
@@ -136,7 +136,7 @@ function doAttemptParseSpeedPaceStr(iSpeedPaceStr) {
 
 function doAttemptParseTargetEventStr(targetEventStr) {
     const queryData = {eventStr: targetEventStr};
-    queryAPINameWithData("parseEventStr", queryData)
+    queryAPINameWithData("parser/parseEventStr", queryData)
         .then((responseBody) => {
             if (responseBody.completeRequest) {
                 $("#divParsedTargetEvent").text(getStrFromEventObj(responseBody.event));
