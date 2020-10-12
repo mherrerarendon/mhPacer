@@ -9,10 +9,11 @@ class Converter:
 
     @staticmethod
     def toBaseSpeed(speed):
-        speed.event = Converter.toBaseEvent(speed.event)
-        speed.time = Converter.toBaseTime(speed.time)
-        speed.normalize()
-        return speed
+        baseSpeed = Speed()
+        baseSpeed.event = Converter.toBaseEvent(speed.event)
+        baseSpeed.time = Converter.toBaseTime(speed.time)
+        baseSpeed.normalize()
+        return baseSpeed
 
     @staticmethod
     def toBaseEvent(event):

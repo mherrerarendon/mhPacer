@@ -12,7 +12,7 @@ def parseSpeedStr():
     reqData = request.get_json()
     speedStr = reqData['speedStr']
     response = rpcapi.parseSpeedStr(speedStr)
-    return jsonify(response), 201
+    return jsonify(response), 200
 
 
 @app.route('/api/v1.0/parsePaceStr', methods=['POST'])
@@ -20,7 +20,7 @@ def parsePaceStr():
     reqData = request.get_json()
     paceStr = reqData['paceStr']
     response = rpcapi.parsePaceStr(paceStr)
-    return jsonify(response), 201
+    return jsonify(response), 200
 
 
 @app.route('/api/v1.0/parseEventStr', methods=['POST'])
@@ -28,7 +28,7 @@ def parseTargetEventStr():
     reqData = request.get_json()
     targetEventStr = reqData['eventStr']
     response = rpcapi.parseTargetEventStr(targetEventStr)
-    return jsonify(response), 201
+    return jsonify(response), 200
 
 
 @app.route('/api/v1.0/getEventTimeWithSpeed', methods=['POST'])
@@ -37,4 +37,4 @@ def getEventTimeWithSpeed():
     speedStr = reqData['speedStr']
     eventStr = reqData['eventStr']
     response = rpcapi.getEventTimeWithSpeed(speedStr, eventStr)
-    return jsonify(response), 201
+    return jsonify(response), 200

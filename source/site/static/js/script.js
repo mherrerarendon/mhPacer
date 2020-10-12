@@ -60,7 +60,6 @@ function getEventTimeWithSpeed(iSpeedStr, iEventStr) {
     queryAPINameWithData("getEventTimeWithSpeed", queryData)
         .then((responseBody) => {
             if (responseBody.time) {
-                console.log(responseBody.time)
                 $("#divResult").text("Event time: " + getStrFromTimeObj(responseBody.time));
             } else {
                 $("#divResult").text("");

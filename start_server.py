@@ -8,5 +8,3 @@ if __name__ == '__main__':
     cli.add_argument('-d', '--debug', action="store_true", help='Runs server in debug mode')
     args = cli.parse_args()
     app.run(debug=True)
-    # app.run(debug=args.debug)
-    # app.run(debug=args.debug, ssl_context='adhoc')
