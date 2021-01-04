@@ -1,5 +1,7 @@
-# app.py
-Make sure to run in the virtual environment, as this will install the necessary dependencies.  
+# Welcome to mhPacer!
+This is a Flask sample project that demonstrates how to implement speed language parsing (e.g. "10 miles per hour" or "10mph", etc) using regexes, as well as speed math (e.g. How much time would it take to travel 100 meters going at a speed of 7 miles per hour?).
+
+## Virtual environment setup
 ```
 # Run the following commands in the repository directory
 
@@ -15,4 +17,8 @@ source venv/bin/activate
 # Install requirements
 pip install -r requirements.txt
 ```
-Run `python app.py` to start the server.
+## Give it a try!
+In a terminal with the virtual environment activated, cd to root directory of this repository and enter `python start_server.py`. Using a browser, navigate to the link specified in the terminal output, and test out different speed and distance combinations!
+
+## Run unit tests
+In a terminal with the virtual environment activated, cd to root directory of the repository, and enter `pytest`
