@@ -7,4 +7,4 @@ if __name__ == '__main__':
         epilog='Copyright 2020, Marco Herrera-Rendon. All Rights Reserved.')
     cli.add_argument('-d', '--debug', action="store_true", help='Runs server in debug mode')
     args = cli.parse_args()
-    app.run(debug=True)
+    app.run(debug=args.debug)

@@ -5,17 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Current File",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal"
-        },
-        {
             "name": "Start server",
             "type": "python",
             "request": "launch",
-            "program": "app.py",
+            "program": "start_server.py",
             "args": ["-d"],
             "console": "integratedTerminal"
         }
