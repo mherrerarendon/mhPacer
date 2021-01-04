@@ -4,3 +4,4 @@ flask_restful
 pylint
 pyopenssl
 pytest
+pytest-cov

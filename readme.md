@@ -1,4 +1,6 @@
 # Welcome to mhPacer!
+<img alt="GitHub branch checks state" src="https://img.shields.io/github/checks-status/mherrerarendon/mhpacer/master?label=tests"><br/>
+<img src="https://img.shields.io/codecov/c/github/mherrerarendon/mhpacer"><br/>
 This is a Flask sample project that demonstrates how to implement speed language parsing (e.g. "10 miles per hour" or "10mph", etc) using regexes, as well as speed math (e.g. How much time would it take to travel 100 meters going at a speed of 7 miles per hour?).
 
 ## Virtual environment setup

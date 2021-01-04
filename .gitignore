@@ -2,3 +2,5 @@
 venv/*
 api/lib/speedmathpkg/speedmath.egg-info/*
 api/venv/*
+.coverage
+coverage.xml
